@@ -1,0 +1,276 @@
+<style type="text/css">
+    .chat-room-container {
+        font-family: "Courier New";
+        width: 680px;
+        height: 300px;
+        overflow: auto;
+        border: 1px solid black;
+        padding: 10px 0px 20px 10px;
+    }
+
+    .LockOff {
+        display: none;
+        visibility: hidden;
+    }
+
+    .LockOn {
+        display: block;
+        visibility: visible;
+        position: absolute;
+        z-index: 999;
+        top: 0px;
+        left: 0px;
+        width: 1024%;
+        height: 768%;
+        background-color: #ccc;
+        text-align: center;
+        padding-top: 20%;
+        filter: alpha(opacity=75);
+        opacity: 0.75;
+    }
+</style>
+<script type="text/javascript">
+    var ws;
+    var wsServerIP = "{$wsServerIP}";
+    var wsServerPort = "{$wsServerPort}";
+    var SocketCreated = false;
+    var isUserloggedout = false;
+
+    function getFormatDate() {
+        var day = new Date();
+        var Year = 0;
+        var Month = 0;
+        var Day = 0;
+        var Hour = 0;
+        var Minute = 0;
+        var Second = 0;
+        var CurrentDate = "";
+        //初始化时间
+        Year = day.getFullYear();
+        Month = day.getMonth() + 1;
+        Day = day.getDate();
+        Hour = day.getHours();
+        Minute = day.getMinutes();
+        Second = day.getSeconds();
+        CurrentDate = CurrentDate + Year + "-";
+        if (Month >= 10) {
+            CurrentDate = CurrentDate + Month + "-";
+        } else {
+            CurrentDate = CurrentDate + "0" + Month + "-";
+        }
+        if (Day >= 10) {
+            CurrentDate = CurrentDate + Day
+        } else {
+            CurrentDate = CurrentDate + "0" + Day
+        }
+        if (Hour >= 10) {
+            CurrentDate += "  " + Hour
+        } else {
+            CurrentDate += "  0" + Hour
+        }
+        if (Minute >= 10) {
+            CurrentDate = CurrentDate + ":" + Minute
+        } else {
+            CurrentDate = CurrentDate + ":0" + Minute
+        }
+        if (Second >= 10) {
+            CurrentDate = CurrentDate + ":" + Second;
+        } else {
+            CurrentDate = CurrentDate + ":0" + Second;
+        }
+        return CurrentDate;
+    }
+
+    function lockOn(str) {
+        var lock = document.getElementById('skm_LockPane');
+        if (lock)
+            lock.className = 'LockOn';
+        lock.innerHTML = str;
+    }
+
+    function lockOff() {
+        var lock = document.getElementById('skm_LockPane');
+        lock.className = 'LockOff';
+    }
+
+    function ToggleConnectionClicked() {
+        if (SocketCreated && (ws.readyState == 0 || ws.readyState == 1)) {
+            lockOn("离开聊天室...");
+            SocketCreated = false;
+            isUserloggedout = true;
+            ws.close();
+        } else {
+            lockOn("进入聊天室...");
+//            Log("准备连接到聊天服务器 ...");
+            try {
+                if ("WebSocket" in window) {
+//                    ws = new WebSocket("wss://" + wsServerIP + ":" + wsServerPort+"/chatroom/");
+                    ws = new WebSocket("wss://"+wsServerIP+":"+wsServerPort+"/chat/");
+                }
+                else if ("MozWebSocket" in window) {
+//                    ws = new MozWebSocket("wss://" + wsServerIP + ":" + wsServerPort+"/chatroom/");
+                    ws = new MozWebSocket("wss://"+wsServerIP+":"+wsServerPort+"/chat/");
+                }
+                SocketCreated = true;
+                isUserloggedout = false;
+            } catch (ex) {
+                Log(ex, "ERROR");
+                return;
+            }
+            document.getElementById("ToggleConnection").innerHTML = "断开";
+            ws.onopen = WSonOpen;
+            ws.onmessage = WSonMessage;
+            ws.onclose = WSonClose;
+            ws.onerror = WSonError;
+        }
+    };
+
+    /**
+     * 连接成功
+     * @constructor
+     */
+    function WSonOpen() {
+        lockOff();
+        Log("连接已经建立。", "OK");
+        $("#SendDataContainer").show();
+        var $txtName = document.getElementById("txtName").value;
+        var wsSend = {
+            "type": 'join',
+            "user_id": '13669631192',
+            "user_name": $txtName,
+            "user_image": $txtName,
+            "room_id": "L00012",
+            "create_time": getFormatDate(),
+            "password": "1123213"
+        };
+        ws.send(JSON.stringify(wsSend));
+    };
+
+    /**
+     * 发送消息
+     * @param event
+     * @returns {boolean}
+     * @constructor
+     */
+    function WSonMessage(event) {
+        var response = JSON.parse(event.data);
+        if (Number(response.errcode) !== 0) {
+            console.log(String(response.errmsg));
+            ws.close();
+            Log(response, "ERROR");
+            return false;
+        }
+        Log(response, "MSG");
+    };
+
+    /**
+     * 关闭回调
+     * @constructor
+     */
+    function WSonClose() {
+        lockOff();
+        if (isUserloggedout) Log("【" + document.getElementById("txtName").value + "】离开了聊天室！");
+        document.getElementById("ToggleConnection").innerHTML = "连接";
+        $("#SendDataContainer").hide();
+    };
+
+    /**
+     * 错误捕捉
+     * @constructor
+     */
+    function WSonError() {
+        lockOff();
+        Log("远程连接中断。", "ERROR");
+    };
+
+    /**
+     * 发送消息
+     * @constructor
+     */
+    function SendDataClicked() {
+        if (document.getElementById("DataToSend").value.trim() != "") {
+            var wsSend = {"type": 'say', "content": document.getElementById("DataToSend").value};
+            ws.send(JSON.stringify(wsSend));
+            document.getElementById("DataToSend").value = "";
+        }
+    };
+
+    /**
+     * 打印消息
+     * @param Text
+     * @param MessageType
+     * @constructor
+     */
+    function Log(Text, MessageType) {
+        if (MessageType == "OK") Text = "<span style='color: green;'>" + Text + "</span>";
+        if (MessageType == "ERROR") Text = "<span style='color: red;'>" + Text + "</span>";
+        if (MessageType == "MSG") {
+            if (Text.type == 'join') {
+                Text = "(" + Text.create_time + ") <br/>欢迎  <span style='color: #0b6cbc;'> " + Text.data + " </span>进入本直播间";
+            } else if (Text.type == 'say') {
+                Text = "(" + Text.create_time + ") <br/> <span style='color: #7a43b6;'> " + Text.data + "：</span>" + Text.content + "";
+            } else {
+                Text = "(" + Text.create_time + ") <br/> <span style='color: #1dc116;'>" + Text.data + " 说11111：" + Text.content + "</span>";
+            }
+        }
+        document.getElementById("LogContainer").innerHTML = document.getElementById("LogContainer").innerHTML + Text + "<br />";
+        var LogContainer = document.getElementById("LogContainer");
+        LogContainer.scrollTop = LogContainer.scrollHeight;
+    };
+
+    $(document).ready(function () {
+        var WebSocketsExist = true;
+        try {
+            var dummy = new WebSocket("wss://"+wsServerIP+":"+wsServerPort+"/chat/");
+        } catch (ex) {
+            try {
+                webSocket = new MozWebSocket("wss://"+wsServerIP+":"+wsServerPort+"/chat/");
+            }
+            catch (ex) {
+                WebSocketsExist = false;
+            }
+        }
+
+        if (WebSocketsExist) {
+            Log("您的浏览器支持WebSocket. 您可以尝试连接到聊天服务器!", "OK");
+        } else {
+            Log("您的浏览器不支持WebSocket。请选择其他的浏览器再尝试连接服务器。", "ERROR");
+            document.getElementById("ToggleConnection").disabled = true;
+        }
+
+        $("#DataToSend").keypress(function (evt) {
+            if (evt.keyCode == 13) {
+                $("#SendData").click();
+                evt.preventDefault();
+            }
+        })
+    });
+
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.js"></script>
+<div class="container">
+    <ul class="breadcrumb">
+        <li><a href="/">首页</a></li>
+        <li class="active">搜索</li>
+    </ul>
+    <!-- 简介 -->
+    <div class="row">
+        <div id="skm_LockPane" class="LockOff"></div>
+        <form id="form1" runat="server">
+            <h1>Web Socket 聊天室</h1>
+            <br/>
+
+            用户名： <input type="text" id="txtName" value="贰萬"/>
+            <button id='ToggleConnection' type="button" onclick='ToggleConnectionClicked();'>连接</button>
+            <br/>
+            <br/>
+            <div id='LogContainer' class='chat-room-container'></div>
+            <br/>
+            <div id='SendDataContainer'>
+                <input type="text" id="DataToSend" size="88"/>
+                <button id='SendData' type="button" onclick='SendDataClicked();'>发送</button>
+            </div>
+            <br/>
+        </form>
+    </div>
+</div>

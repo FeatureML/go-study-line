@@ -9,10 +9,11 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
     public static $files = array (
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
-        '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
+        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '0f066c7cf996f26fedf8f5e90a916a95' => __DIR__ . '/..' . '/houdunwang/config/src/helper.php',
         'a1b9718204ff2589da0807dfa6153c7a' => __DIR__ . '/..' . '/houdunwang/crypt/src/helper.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
@@ -57,12 +58,26 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
             'Symfony\\Component\\Process\\' => 26,
             'Symfony\\Component\\Filesystem\\' => 29,
             'Symfony\\Component\\DomCrawler\\' => 29,
+            'Swoole\\' => 7,
+        ),
+        'R' => 
+        array (
+            'React\\Promise\\' => 14,
+        ),
+        'Q' => 
+        array (
+            'QUEUE\\' => 6,
         ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Phinx\\' => 6,
+        ),
+        'O' => 
+        array (
+            'Openresty\\' => 10,
+            'OSS\\' => 4,
         ),
         'M' => 
         array (
@@ -74,6 +89,8 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
         ),
         'G' => 
         array (
+            'GuzzleHttp\\Stream\\' => 18,
+            'GuzzleHttp\\Ring\\' => 16,
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
@@ -83,10 +100,18 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
             'Flc\\Alidayu\\' => 12,
             'Faker\\' => 6,
         ),
+        'E' => 
+        array (
+            'Elasticsearch\\' => 14,
+        ),
         'D' => 
         array (
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Common\\Cache\\' => 22,
+        ),
+        'A' => 
+        array (
+            'AliyunMNS\\' => 10,
         ),
     );
 
@@ -129,8 +154,9 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
         ),
         'think\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/thinkphp/library/think',
-            1 => __DIR__ . '/..' . '/topthink/think-queue/src',
+            0 => __DIR__ . '/..' . '/topthink/think-queue/src',
+            1 => __DIR__ . '/../..' . '/thinkphp/library/think',
+            2 => __DIR__ . '/..' . '/topthink/think-image/src',
         ),
         'phpDocumentor\\Reflection\\' => 
         array (
@@ -178,6 +204,18 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
         array (
             0 => __DIR__ . '/..' . '/symfony/dom-crawler',
         ),
+        'Swoole\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/eaglewu/swoole-ide-helper/src',
+        ),
+        'React\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/promise/src',
+        ),
+        'QUEUE\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/queue',
+        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
@@ -190,6 +228,14 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
         array (
             0 => __DIR__ . '/..' . '/topthink/think-migration/phinx/src/Phinx',
         ),
+        'Openresty\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phplua',
+        ),
+        'OSS\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/aliyuncs/oss-sdk-php/src/OSS',
+        ),
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
@@ -198,6 +244,14 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
         array (
             0 => __DIR__ . '/..' . '/league/oauth2-client/src',
             1 => __DIR__ . '/..' . '/league/oauth2-github/src',
+        ),
+        'GuzzleHttp\\Stream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/streams/src',
+        ),
+        'GuzzleHttp\\Ring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/ringphp/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -219,6 +273,10 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
         array (
             0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
         ),
+        'Elasticsearch\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/elasticsearch/elasticsearch/src/Elasticsearch',
+        ),
         'Doctrine\\Instantiator\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
@@ -226,6 +284,10 @@ class ComposerStaticInitee33ab6d7d4ede583edbaf1fcd83c759
         'Doctrine\\Common\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
+        ),
+        'AliyunMNS\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/aliyun/AliyunMNS',
         ),
     );
 

@@ -1,0 +1,313 @@
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Linux内存管理
+            </div>
+            <div class="panel-body" id="system-memory" style="width: 100%; height: 350px; margin: 0 auto"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                磁盘检测
+            </div>
+            <div class="panel-body" id="disk" style="width: 100%; height: 350px; margin: 0 auto"></div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    $(document).ready(function () {
+        var title = {
+            text: 'Linux内存管理'
+        };
+        var subtitle = {
+            text: 'Source: runoob.com'
+        };
+        var xAxis = {
+            categories: ['一月', '二月', '三月', '四月', '五月', '六月'
+                , '七月', '八月', '九月', '十月', '十一月', '十二月']
+        };
+        var yAxis = {
+            title: {
+                text: 'Temperature (\xB0C)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        };
+
+        var tooltip = {
+            valueSuffix: '\xB0C'
+        }
+
+        var legend = {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        };
+
+        var series = [
+            {
+                name: 'Tokyo',
+                data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2,
+                    26.5, 23.3, 18.3, 13.9, 9.6]
+            },
+            {
+                name: 'New York',
+                data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8,
+                    24.1, 20.1, 14.1, 8.6, 2.5]
+            },
+            {
+                name: 'Berlin',
+                data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6,
+                    17.9, 14.3, 9.0, 3.9, 1.0]
+            },
+            {
+                name: 'London',
+                data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0,
+                    16.6, 14.2, 10.3, 6.6, 4.8]
+            }
+        ];
+
+        var json = {};
+
+        json.title = title;
+        json.subtitle = subtitle;
+        json.xAxis = xAxis;
+        json.yAxis = yAxis;
+        json.tooltip = tooltip;
+        json.legend = legend;
+        json.series = series;
+
+        $('#container').highcharts(json);
+    });
+</script>
+<script src="__COMMON__/plugins/highcharts/highcharts.js"></script>
+<script language="JavaScript">
+    //数据获取
+    var moniServerIp = "{$moniServerIp}";
+    var wsServerIP = "{$wsServerIP}";
+    var wsServerPort = "{$wsServerPort}";
+    var moniMehtod = "server02";
+    var moniDataUnit = 'MB';
+
+    var wsMemory = 0.0;
+    var wsSurplus = 0.0;
+    var wsUsed = 0.0;
+    var server_run_days = 0;
+    var ifconfig_input = 0;
+    var ifconfig_output = 0;
+    wsSend = {
+        "action": moniMehtod,
+        "name": "tinywan",
+    };
+
+    /**
+     * 字节转换
+     * @param $size
+     * @returns {*}
+     */
+    function bytesToSize(bytes) {
+        if (bytes === 0) return '0 B';
+
+        var k = 1024;
+
+        sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+        i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+    }
+
+    $(document).ready(function () {
+        var ws = new WebSocket("wss://" + wsServerIP + ":" + wsServerPort);
+        ws.onopen = function () {
+            ws.send(JSON.stringify(wsSend));
+        };
+        ws.onclose = function () {
+            console.log('链接已断开');
+            ws.close();
+        };
+        ws.onmessage = function (e) {
+            var response = JSON.parse(e.data);
+            if (Number(response.errcode) !== 0) {
+                console.log(String(response.errmsg));
+                ws.close();
+                alert('出错啦!' + String(response.errmsg));
+                return;
+            }
+            var divisor = 1;
+            switch (moniDataUnit.toLocaleLowerCase()) {
+                case 'mb':
+                    divisor = 1024;
+                    break;
+                case  "gb":
+                    divisor = 1024 * 1024;
+                    break;
+            }
+            wsMemory = response.memory / divisor;
+            wsSurplus = response.surplus / divisor;
+            wsUsed = response.used / divisor;
+            server_run_days = response.server_run_days;
+            ifconfig_input = response.ifconfig_input;
+            ifconfig_output = response.ifconfig_output;
+            console.log("收到服务端的消息：" + wsMemory);
+            console.log("收到服务端的消息wsSurplus：" + wsSurplus);
+            console.log("收到服务端的消息wsUsed：" + wsUsed);
+            //服务器状态 ，把数据写入html
+            $('#server-run-time').text(server_run_days);
+            $('#wsUsed').text(wsUsed + "(" + moniDataUnit + ")");
+            $('#wsSurplus').text(wsSurplus + "(" + moniDataUnit + ")");
+            $('#ifconfig_input').text(ifconfig_input + ' (bytes) 【 约' + bytesToSize(ifconfig_input) + ' 】');
+            $('#ifconfig_output').text(ifconfig_output + ' (bytes) 【 约' + bytesToSize(ifconfig_output) + ' 】');
+        };
+
+        //----------highcharts的图标插件部分--------------
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+
+        // 系统内存使用率
+        $('#system-memory').highcharts({
+            chart: {
+                type: 'spline',
+                animation: Highcharts.svg, // don't animate in old IE
+                marginRight: 10,
+                events: {
+                    load: function () {
+                        // set up the updating of the chart each second
+                        var series = this.series[0];
+                        setInterval(function () {
+                            // current time
+                            var x = (new Date()).getTime(),
+                                y = wsMemory * 1.00;
+                            series.addPoint([x, y], true, true);
+                        }, 1000);
+                    }
+                }
+            },
+            title: {
+                text: "{$memoryTitle}(单位:" + moniDataUnit + ')'
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: {
+                title: {
+                    text: '当前内存(MemFree)'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + '</b><br/>' +
+                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                        Highcharts.numberFormat(this.y, 2);
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: '内存指标',
+                data: (function () {
+                    // generate an array
+                    var data = [],
+                        time = (new Date()).getTime(),
+                        i;
+                    for (i = -19; i <= 0; i += 1) {
+                        data.push({
+                            x: time + i * 1000,
+                            y: wsMemory
+                        });
+                    }
+                    return data;
+                }())
+            }]
+        });
+
+
+        //视频存放空间占比率
+        $('#disk').highcharts({
+            chart: {
+                type: 'spline',
+                animation: Highcharts.svg, // don't animate in old IE
+                marginRight: 10,
+                events: {
+                    load: function () {
+                        // set up the updating of the chart each second
+                        var series = this.series[0];
+                        setInterval(function () {
+                            // current time
+                            var x = (new Date()).getTime(),
+                                y = wsUsed * 1.00;
+                            series.addPoint([x, y], true, true);
+                        }, 1000);
+                    }
+                }
+            },
+            title: {
+                text: "{$dishTitle}(单位:" + moniDataUnit + ')'
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: {
+                title: {
+                    text: '磁盘空间'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + '</b><br/>' +
+                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                        Highcharts.numberFormat(this.y, 2);
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: '磁盘指标',
+                data: (function () {
+                    // generate an array
+                    var data = [],
+                        time = (new Date()).getTime(),
+                        i;
+                    for (i = -19; i <= 0; i += 1) {
+                        data.push({
+                            x: time + i * 1000,
+                            y: wsUsed
+                        });
+                    }
+                    return data;
+                }())
+            }]
+        });
+
+
+    });
+</script>

@@ -3,25 +3,26 @@
 <!--[if !IE]> -->
 
 <script type="text/javascript">
-    window.jQuery || document.write("<script src='__JS__/jquery-2.0.3.min.js'>"+"<"+"/script>");
+    window.jQuery || document.write("<script src='__JS__/jquery-2.0.3.min.js'>" + "<" + "/script>");
 </script>
 
 <!-- <![endif]-->
 
 <!--[if IE]>
 <script type="text/javascript">
-    window.jQuery || document.write("<script src='__JS__/jquery-1.10.2.min.js'>"+"<"+"/script>");
+    window.jQuery || document.write("<script src='__JS__/jquery-1.10.2.min.js'>" + "<" + "/script>");
 </script>
 <![endif]-->
 
 <script type="text/javascript">
-    if("ontouchend" in document) document.write("<script src='__JS__/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+    if ("ontouchend" in document) document.write("<script src='__JS__/jquery.mobile.custom.min.js'>" + "<" + "/script>");
 </script>
 <script src="__JS__/bootstrap.min.js"></script>
 <script src="__JS__/typeahead-bs2.min.js"></script>
 
 <!-- page specific plugin scripts -->
-
+<script src="__JS__/jquery-ui-1.10.3.full.min.js"></script>
+<script src="__JS__/jquery.ui.touch-punch.min.js"></script>
 <!--[if lte IE 8]>
 <script src="__JS__/excanvas.min.js"></script>
 <![endif]-->
@@ -30,6 +31,30 @@
 
 <script src="__JS__/ace-elements.min.js"></script>
 <script src="__JS__/ace.min.js"></script>
+
+<!-- 权限警告模态框（Modal） -->
+<div class="modal fade" id="authHanderModal" tabindex="-1" role="dialog" aria-labelledby="authHanderModal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title"><i class="icon-lightbulb bigger-110"></i> &nbsp;提示信息!</h4>
+            </div>
+            <div class="modal-body">
+                <h3>
+                    <img id="auth-image" src="__COMMON__/images/info.svg" alt="" width="60"/>
+                    <span class="auth-msg"></span>
+                </h3>
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-success" data-dismiss="modal" style="width: 75px">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

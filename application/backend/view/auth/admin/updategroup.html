@@ -1,0 +1,83 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active">
+                    <a data-toggle="tab" href="#sub-add">
+                        <i class="green icon-home bigger-110"></i>
+                        编辑栏目
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#category-list">
+                        <i class="green icon-home bigger-110"></i>
+                        栏目列表
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="sub-add" class="tab-pane  in active">
+                    <form action="{:url('/backend/auth.admin/updategroup')}" method="post" class="form-horizontal"
+                          role="form">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-username"> 用户名称:</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="form-username" name="username" disabled="disabled" value="{$userInfo['username']}"
+                                       class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 所属用户组:</label>
+                            <div class="col-sm-9">
+                                <select name="group_id" id="select_group_id">
+                                    {volist name="groups" id="vo"}
+                                    <option value="{$vo['id']}" {if condition="$vo['id'] == $userInfo['group_id']" }selected{/if} >{$vo['title']} </option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <input type="hidden" name="uid" id="uid" value="{$userInfo['id']}">
+                            <a href="#" id="id-btn-dialog2" class="btn btn-info btn-sm update">提交</a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div><!-- /span -->
+
+</div><!-- /row -->
+<script type="text/javascript">
+    $(function(){
+        $(".update").bind('click',function(){
+            console.log();
+            var $msg = confirm('确认修改用户组吗？');
+            var $url = "{:url('/backend/auth.admin/updategroup')}";
+            if(!$msg) return false;
+            $.ajax({
+                url: $url,
+                type: 'post',
+                dataType: 'json',
+                data:{
+                    'uid':$("#uid").val(),
+                    'group_id':$("#select_group_id").val()
+                },
+                success:function(response){
+                    console.log(response);
+                    if(response.code == 200){
+                        alert(response.msg);
+                        window.location.reload();
+                    }else{
+                        alert(response.msg);
+                    }
+                },
+                error:function(){
+                    alert('删除失败');
+                }
+            });
+        });
+    });
+</script>

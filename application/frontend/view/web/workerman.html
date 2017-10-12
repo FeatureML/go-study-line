@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>GetUserMedia实例</title>
+</head>
+<body>
+<h1>Workerman是socket 服务器框架</h1>
+<div class="row">
+    websocket send content：<input type="text" style="height: 50px; width: 100%;" name="data" id="data"><p></p>
+    <button id="submit" onclick="sub()" >send info</button> <p></p>
+    <div id="output"></div>
+</div>
+<script src="https://cdn.bootcss.com/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+<script language="javascript" type="text/javascript">
+    var wsUri = "ws://115.29.8.55:2346/";
+    var output;
+
+    function init() {
+        output = document.getElementById("output");
+        testWebSocket();
+        websocket.send("hello \n");
+    }
+
+    function testWebSocket() {
+        websocket = new ReconnectingWebSocket(wsUri);
+        websocket.onopen = function (evt) {
+            onOpen(evt)
+        };
+        websocket.onclose = function (evt) {
+            onClose(evt)
+        };
+        websocket.onmessage = function (evt) {
+            onMessage(evt)
+        };
+        websocket.onerror = function (evt) {
+            onError(evt)
+        };
+    }
+    function onOpen(evt) {
+        console.log("CONNECTED");
+    }
+
+    function onClose(evt) {
+        console.log("DISCONNECTED");
+    }
+
+    function onMessage(evt) {
+        writeToScreen('<span style="color: blue;">RESPONSE: '+ evt.data + '</span>');
+    }
+
+    function onError(evt) {
+        console.log('<span style="color: red;">ERROR:</span> ' + evt.data);
+    }
+
+    function writeToScreen(message) {
+        var pre = document.createElement("p");
+        pre.style.wordWrap = "break-word";
+        pre.innerHTML = message;
+        output.appendChild(pre);
+    }
+
+    //添加或者修改json数据
+    function setJson(jsonStr, name, value) {
+        if (!jsonStr)jsonStr = "{}";
+        var jsonObj = JSON.parse(jsonStr);
+        jsonObj[name] = value;
+        return JSON.stringify(jsonObj)
+    }
+
+    function toJson(str) {
+        var json = eval('(' + str + ')');
+        return json;
+    }
+
+    function sub(){
+        var text = document.getElementById('data').value;
+        websocket.send(text+"\n");
+    }
+    window.addEventListener("load", init, false);
+</script>
+</body>
+</html>

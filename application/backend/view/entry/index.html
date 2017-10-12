@@ -51,46 +51,7 @@
                     <span class="editable" id="about">超级管理员</span>
                 </div>
             </div>
-            <div class="profile-info-row">
-                <div class="profile-info-name"> Github </div>
-
-                <div class="profile-info-value">
-                    <span class="editable" id="github">
-                           php-project-practice ：<iframe src="https://ghbtns.com/github-btn.html?user=Tinywan&repo=php-project-practice&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px"></iframe><p></p>
-        Html5-m3u8-RTMP ：<iframe src="https://ghbtns.com/github-btn.html?user=Tinywan&repo=Html5-m3u8-RTMP&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px"></iframe><p></p>
-        Lua-Nginx-Redis ：<iframe src="https://ghbtns.com/github-btn.html?user=Tinywan&repo=Lua-Nginx-Redis&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
-                    </span>
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
-
-<script type="application/javascript">
-    function copyLink(event){
-        let target = event.target;
-        let fullLink = target.getAttribute('data-fulllink');
-
-        // 在页面上建一个空白节点，用来缓存要被复制的数据
-        let copyNode = document.querySelector('.copy-area');
-        let range = document.createRange();
-        let selection = window.getSelection();
-
-        copyNode.innerHTML = fullLink;
-        range.selectNode(copyNode);
-
-        // 去除默认的选区对象
-        if (selection.rangeCount > 0) {
-            selection.removeAllRanges();
-        }
-
-        selection.addRange(range);
-        document.execCommand('copy');
-
-        target.innerHTML = '复制成功';
-    }
-
-    document.querySelector('.copy-link').onclick = copyLink;
-
-</script>

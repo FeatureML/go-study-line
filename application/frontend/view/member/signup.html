@@ -17,7 +17,8 @@
                     </div>
                     <div class="form-group field-signupform-password required">
                         <label class="control-label" for="signupform-password">密码</label>
-                        <input type="password" id="signupform-password" class="form-control" name="password" placeholder="密码"
+                        <input type="password" id="signupform-password" class="form-control" name="password"
+                               placeholder="密码"
                                aria-required="true">
 
                         <div class="help-block"></div>
@@ -30,10 +31,11 @@
                         <div class="help-block"></div>
                     </div>
                     <div class="form-group field-signupform-verifycode">
-                        <label class="control-label" for="signupform-verifycode">验证码</label>
+                        <label class="control-label" for="signupform-verifycode1">验证码</label>
                         <div class="row">
                             <div class="col-lg-12">
-                                <img src="{:captcha_src()}" alt="captcha" onclick="this.src=this.src+'?'+Math.random()"/>
+                                <img src="{:captcha_src()}" alt="captcha"
+                                     onclick="this.src=this.src+'?'+Math.random()"/>
                             </div>
                         </div>
                         <div class="help-block"></div>
@@ -59,7 +61,7 @@
                                 class="auth-icon fa fa-qq fa-2x"></span></a></li>
                         <li class="auth-client"><a class="auth-link" href="/auth?authclient=weibo" title="微博登录"><span
                                 class="auth-icon fa fa-weibo fa-2x"></span></a></li>
-                        <li class="auth-client"><a class="auth-link" href="/auth?authclient=github"
+                        <li class="auth-client"><a class="auth-link" href="/frontend/open_auth/github"
                                                    title="GitHub 登录"><span class="auth-icon fa fa-github fa-2x"></span></a>
                         </li>
                     </ul>
@@ -77,3 +79,6 @@
     </div>
 
 </div>
+
+
+

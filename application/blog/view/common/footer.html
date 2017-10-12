@@ -1,0 +1,139 @@
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <section class="site-overview sidebar-panel sidebar-panel-active">
+            <div class="site-author motion-element" itemprop="author" itemscope
+                 itemtype="http://schema.org/Person">
+                <img class="site-author-image" src="__COMMON__/images/tinywan-header.jpg" height="107"
+                     width="100" alt="{$Think.config.webinfo.WEBNAME}"
+                     itemprop="image"/>
+                <p class="site-author-name" itemprop="name">{$Think.config.webinfo.WEBNAME}</p>
+            </div>
+            <p class="site-description motion-element" itemprop="description">相信自己，贵在坚持</p>
+            <nav class="site-state motion-element">
+                <div class="site-state-item site-state-posts">
+                    <a href="#">
+                        <span class="site-state-item-count">{$articleCounts}</span>
+                        <span class="site-state-item-name">日志</span>
+                    </a>
+                </div>
+
+                <div class="site-state-item site-state-categories">
+                    <a href="#">
+                        <span class="site-state-item-count">{$categoryCounts}</span>
+                        <span class="site-state-item-name">分类</span>
+                    </a>
+                </div>
+
+                <div class="site-state-item site-state-tags">
+                    <a href="#">
+                        <span class="site-state-item-count">{$tagCounts}</span>
+                        <span class="site-state-item-name">标签</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="feed-link motion-element">
+                <a href="#" rel="alternate">
+                    <i class="menu-item-icon icon-next-feed"></i>
+                    RSS
+                </a>
+            </div>
+            <div class="links-of-author motion-element">
+            </div>
+
+            <div class="links-of-author motion-element">
+                <span class="links-of-author-item">
+                    <a href="https://www.tinywan.com" title="Github" target="_blank">Home</a>
+                </span>
+                <span class="links-of-author-item">
+                     <a href="https://www.tinywan.com" title="Github" target="_blank">Blog</a>
+                </span>
+                <span class="links-of-author-item">
+                    <a href="https://github.com/Tinywan" title="Github" target="_blank">Github</a>
+                </span>
+                <span class="links-of-author-item">
+                    <a href="http://www.cnblogs.com/tinywan/" title="Github" target="_blank">博客园</a>
+                </span>
+            </div>
+        </section>
+
+    </div>
+</aside>
+
+</main>
+
+<footer id="footer" class="footer">
+    <div class="footer-inner">
+        <div class="copyright">
+                <span itemprop="copyrightYear">
+                    {$Think.config.webinfo.COPY}
+                </span>
+            <span>
+                &nbsp;&nbsp;{$Think.config.webinfo.RECORD}
+                 </span>
+        </div>
+    </div>
+</footer>
+<div class="back-to-top"></div>
+</div>
+<script type="text/javascript" src="__JS__/index.js"></script>
+<script type="text/javascript" src="__JS__/jquery.fancybox.pack.js"></script>
+<script type="text/javascript" src="__JS__/fancy-box.js"></script>
+
+
+<script type="text/javascript" src="__JS__/helpers.js"></script>
+
+<script type="text/javascript" src="__JS__/velocity.min.js"></script>
+<script type="text/javascript" src="__JS__/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="__JS__/motion.js" id="motion.global"></script>
+
+<script type="text/javascript" src="__JS__/fastclick.min.js"></script>
+
+
+<script type="text/javascript" src="__JS__/lazyload.js"></script>
+
+<script type="text/javascript" src="__JS__/bootstrap.js"></script>
+<script type="text/javascript">
+    SyntaxHighlighter.all();
+</script>
+<!--百度自动推送js-->
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+<!--站长统计-->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1260977054'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1260977054' type='text/javascript'%3E%3C/script%3E"));</script>
+
+<!-- APlayer Start -->
+<script type="text/javascript" src="__JS__/aplayer.min.js"></script>
+<script>
+    var len = APlayerOptions.length;
+    for (var i = 0; i < len; i++) {
+        APlayers[i] = new APlayer({
+            element: document.getElementById('player' + APlayerOptions[i]['id']),
+            narrow: false,
+            preload: APlayerOptions[i]['preload'],
+            mutex: APlayerOptions[i]['mutex'],
+            autoplay: APlayerOptions[i]['autoplay'],
+            showlrc: APlayerOptions[i]['showlrc'],
+            music: APlayerOptions[i]['music'],
+            theme: APlayerOptions[i]['theme']
+        });
+        APlayers[i].init();
+    }
+</script>
+<!-- APlayer End -->
+
+</body>
+</html>

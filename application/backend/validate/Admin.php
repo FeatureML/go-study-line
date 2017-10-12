@@ -25,4 +25,5 @@ class Admin extends Validate
         'code.require'        => '验证码不能为空',
         'code.captcha'        => '验证码不正确',
     ];
+
 }

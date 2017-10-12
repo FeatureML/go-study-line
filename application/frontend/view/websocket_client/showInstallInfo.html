@@ -1,0 +1,293 @@
+<style type="text/css">
+    .chat-room-container {
+        font-family: "DejaVu Sans Mono";
+        width: 100%;
+        height: 700px;
+        overflow: auto;
+        border: 1px solid #c1b7b7;
+        padding: 10px 0px 20px 10px;
+        color: #f5f9f4;
+        background-color: #1b1a1a;
+        display: none;
+    }
+</style>
+<script type="text/javascript">
+    var ws;
+    var wsServerIP = "{$wsServerIP}";
+    var wsServerPort = "{$wsServerPort}";
+    var SocketCreated = false;
+    var isUserloggedout = false;
+
+    function ToggleConnectionClicked() {
+        if (SocketCreated && (ws.readyState == 0 || ws.readyState == 1)) {
+            SocketCreated = false;
+            isUserloggedout = true;
+            ws.close();
+        } else {
+            try {
+                if ("WebSocket" in window) {
+                    ws = new WebSocket("wss://" + wsServerIP + ":" + wsServerPort + "/chat/");
+                }
+                else if ("MozWebSocket" in window) {
+                    ws = new MozWebSocket("wss://" + wsServerIP + ":" + wsServerPort + "/chat/");
+                }
+                SocketCreated = true;
+                isUserloggedout = false;
+            } catch (ex) {
+                Log(ex, "ERROR");
+                return;
+            }
+            ws.onopen = WSonOpen;
+            ws.onmessage = WSonMessage;
+            ws.onclose = WSonClose;
+            ws.onerror = WSonError;
+        }
+    };
+
+
+    function WSonOpen() {
+        Log("安装环境连接已经建立。", "OK");
+    };
+
+    function WSonMessage(event) {
+//        console.log(event.data);
+        Log(event.data, "MSG");
+    };
+
+    function WSonClose() {
+        if (isUserloggedout) Log("【" + document.getElementById("txtName").value + "】离开了聊天室！");
+        document.getElementById("ToggleConnection").innerHTML = "连接";
+        $("#SendDataContainer").hide();
+    };
+
+    function WSonError() {
+        Log("远程连接中断。", "ERROR");
+    };
+
+    function Log(Text, MessageType) {
+        var LogContainer = $("#LogContainer");
+        if (MessageType == "OK") Text = "<span style='color: green;'>" + Text + "</span>";
+        if (MessageType == "ERROR") Text = "<span style='color: red;'>" + Text + "</span>";
+        if (MessageType == "MSG") {
+            Text = Text;
+        }
+        var logList = $('<div class="log-list">' + Text + '</div>')
+        LogContainer.append(logList);
+
+        var logLegth = LogContainer.children('.log-list').length;
+
+        if (logLegth > 100) {
+            LogContainer.find('.log-list').eq(0).remove();
+        }
+        var logHeight = 0;
+        LogContainer.find('.log-list').each(function () {
+            logHeight += $(this).height();
+        });
+        LogContainer.scrollTop(logHeight);
+    };
+
+    $(document).ready(function () {
+        $('body').delegate('.start-build-hander', 'click', function () {
+            var $url = "{:url('frontend/websocket_client/showInstallInfo')}";
+            var $_data = {
+                'build-license': $("#build-license").val(),
+                'push-server': $("#push-server").val(),
+                'push-server-pwd': $("#push-server-pwd").val(),
+                'node1-server': $("#node1-server").val(),
+                'node1-server-pwd': $("#node1-server-pwd").val(),
+                'node2-server': $("#node2-server").val(),
+                'node2-server-pwd': $("#node2-server-pwd").val(),
+                'proxy-server': $("#proxy-server").val(),
+                'proxy-server-pwd': $("#proxy-server-pwd").val(),
+            };
+            console.log($_data);
+            $.ajax({
+                url: $url,
+                type: 'post',
+                data: $_data,
+                dataType: "json",
+                //服务器成功响应处理函数
+                success: function ($response) {
+                    ToggleConnectionClicked();
+                    console.log($response);
+                    $(".chat-room-container").css('display', 'block');
+                    $(".all-config-info").css('display', 'none');
+                },
+                //服务器响应失败处理函数
+                error: function (data, status, e) {
+                    // 如果提示不成功的话，则一定要把数据保存下来，继续填写到表单中去
+                    alert(e);
+                }
+            })
+        });
+    });
+</script>
+<!-- 主要内容 -->
+<div class="container">
+    <h1>流媒体系统自动安装</h1>
+    <hr>
+    <div class="row all-config-info">
+        <form class="form-horizontal" role="form">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-language"></i> 基础配置信息</h3></div>
+                <div class="panel-body">
+                    <div class="col-md-6">
+                        <label for="name1">许可认证字符串</label>
+                        <div>
+                            <input class="form-control" type="text" name="build-license" id="build-license" placeholder=".col-lg-4"
+                                   value="00205268c4e6db6bf25a04cbc0cb23e6efc7f929">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="name2">需要安装的软件</label>
+                        <div>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="inlineCheckbox1" value="option1"> Nginx
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="inlineCheckbox2" value="option2"> Lua
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="inlineCheckbox3" value="option3"> Shell
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="inlineCheckbox4" value="option1"> Openresty
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="inlineCheckbox5" value="option2"> PHP
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="inlineCheckbox6" value="option3"> MySQL
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-desktop"></i> 推流服务器</h3></div>
+                <div class="panel-body">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">IP地址：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="push-server" id="push-server" type="text" value="192.168.1.181">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">账号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" value="root" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">密码：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="push-server-pwd" id="push-server-pwd" type="password" value="www123456">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-desktop"></i> 节点服务器1</h3></div>
+                <div class="panel-body">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">IP地址：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="node1-server" id="node1-server" value="192.168.1.182">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">账号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" value="root" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">密码：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="password" name="node1-server-pwd" id="node1-server-pwd" value="www123456">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-desktop"></i> 节点服务器2</h3></div>
+                <div class="panel-body">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">IP地址：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" value="192.168.1.185" name="node2-server" id="node2-server">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">账号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" value="root" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">密码：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="password" name="node2-server-pwd" id="node2-server-pwd" value="www123456">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-desktop"></i> 反向代理服务器</h3></div>
+                <div class="panel-body">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">IP地址：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" value="192.168.1.183" name="proxy-server" id="proxy-server">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">账号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" value="root" disabled="disabled">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">密码：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="password" name="proxy-server-pwd" id="proxy-server-pwd" value="www123456">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <a type="button" class=" btn btn-primary btn-lg btn-block start-build-hander">开始编译</a>
+        <div id='LogContainer' class='chat-room-container'></div>
+    </div>
+</div>
+
+
+
+

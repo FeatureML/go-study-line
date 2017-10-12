@@ -1,0 +1,69 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 pricing-box">
+            <div class="widget-box">
+                <div class="widget-header header-color-dark">
+                    <h1 class="bigger lighter">{$live.name}</h1>
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <video id="live-stream" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay preload="auto" poster="__COMMON__/videojs/image/video-background.jpg" data-setup='{"example_option":true}'>
+                            <source src="https://live.tinywan.com/hls/{$live.id}.m3u8" type="application/x-mpegURL">
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p></p>
+
+<script src="__COMMON__/videojs/videojs/video.js"></script>
+<script src="__COMMON__/videojs/videojs/videojs-contrib-hls.min.js"></script>
+<script>
+    var options = {
+        width: 1280,
+        height: 700
+    }
+    var player = videojs('live-stream', options);
+    player.play();
+
+    player.addClass('vjs-matrix');
+
+    player.on(['loadstart', 'play', 'playing', 'firstplay', 'pause', 'ended', 'adplay', 'adplaying', 'adfirstplay', 'adpause', 'adended', 'contentplay', 'contentplaying', 'contentfirstplay', 'contentpause', 'contentended', 'contentupdate'], function (e) {
+
+    });
+    player.one('canplay', function() {
+        console.log('player11111111111111');
+    });
+    console.log("暂停播放测哦错"+player.pause())
+    console.log("暂停播放测哦错"+player.currentTime())
+    /**
+     * 获取状态
+     * state值：1.playing播放中 2.paused停止 3.idle空闲 4. completed结束
+     */
+    $('.player-status').click(function () {
+        var state = player.getState();
+        console.log(state);
+        var msg;
+        switch (state){
+            case 'buffering':
+                msg = '加载中...';
+                break;
+            case 'playing':
+                msg = '播放中...';
+                break;
+            case 'paused':
+                msg = '暂停';
+                break;
+            case 'idle':
+                msg = '停止';
+                break;
+            case 'completed':
+                msg = '结束';
+                break;
+        }
+        alert(msg);
+    });
+</script>

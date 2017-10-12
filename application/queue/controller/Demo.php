@@ -29,14 +29,18 @@ class Demo
         $link = "http://www.baidu.com/backend/login/emailRegisterUrlValid?checkstr=11111111111&auth_key=909090909090";
         $payLoad = [
             'time' => time(),
-            'mail' => "756684177@qq.com",
+            'mail' => "1722318623@qq.com",
             'url' => $link,
             ];
         $queue = 'mail';
 
         $pushed = Queue::push($consumer ,$payLoad ,$queue);
         if ($pushed) {
-            Log::error("[2000000000000000000001]邮件队列发布结果：".$pushed);
+            Log::error("[100000000000000000]加入队列成功，开始执行队列：".$pushed);
+//            $command = 'queue:work' ;
+//            $params = ['--queue='.$queue , '--sleep=3'];
+//            $result = \think\Console::call($command ,$params);
+//            Log::error("[200000000000000000]队列执行结束，返回结果：".json_encode($result));
             echo 'job Pushed.' . '<br/>' .'job payload :' . '<br/>' .var_export($payLoad,TRUE);
         }else{
             echo 'Oops, something wrong with your queue';
@@ -48,13 +52,15 @@ class Demo
      */
     public function cmdCliTest(  )
     {
-        // echo CLI_PATH."cli.php Library/index/test";
-        echo '------------------------------------启动一个CLi进程 开始--------------------------------';
-        exec("php think queue:work --queue mail",$output, $return_val);
+        $queue = 'mail';
+        $queueFile = CLI_PATH."queue_cli.php";
+        echo '------------------------------------ 开始一个CLi进程--------------------------------';
+//        exec("php think queue:work --queue mail",$output, $return_val);
+        exec("php D:\wamp64\www\thinkphp5-study-line/cli/queue_cli.php mail",$output, $return_val);
         echo "<hr/>";
         var_dump($output);  //命令执行后生成的数组
+        echo "执行的状态:".$return_val."<br/>"; //执行的状态
         echo "<hr/>";
-        var_dump("执行的状态:".$return_val); //执行的状态
-        echo '-----------------------------------启动一个CLi进程 结束----------------------------------';
+        echo '-----------------------------------结束一个CLi进程 ----------------------------------';
     }
 }

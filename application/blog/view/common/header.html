@@ -1,0 +1,73 @@
+<!doctype html>
+<html class="theme-next use-motion theme-next-mist">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta http-equiv="Cache-Control" content="no-transform"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="__CSS__/main.css?ver=1"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/jquery.fancybox.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/font-awesome.min.css"/>
+
+    <script type="text/javascript" src="__COMMON__/plugins/ueditor/third-party/SyntaxHighlighter/shCore.js"></script>
+    <link rel="stylesheet" href="__COMMON__/plugins/ueditor/third-party/SyntaxHighlighter/shCoreDefault.css">
+
+    <script type="text/javascript" id="hexo.configuration">
+        var CONFIG = {
+            scheme: 'Mist',
+            motion: true,
+            sidebar: 'always'
+        };
+    </script>
+    <title>{$Think.config.webinfo.WEBNAME}</title>
+    <!-- APlayer Start -->
+    <link rel="stylesheet" type="text/css" href="__CSS__/aplayer.min.css"/>
+    <meta name="description" content="{$Think.config.webinfo.WEBNAME}"/>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+<div class="container one-column page-home">
+    <!--page home-->
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><h1 class="site-meta">
+            <span class="logo-line-before"><i></i></span>
+            <a href="https://www.tinywan.com/" class="brand" rel="start">
+              <span class="logo">
+                <i class="icon-next-logo"></i>
+            </span>
+                <span class="site-title">{$Think.config.webinfo.WEBNAME}</span>
+            </a>
+            <span class="logo-line-after"><i></i></span>
+        </h1>
+
+            <div class="site-nav-toggle">
+                <button>
+                    <span class="btn-bar"></span>
+                    <span class="btn-bar"></span>
+                    <span class="btn-bar"></span>
+                </button>
+            </div>
+
+            <nav class="site-nav">
+                <ul id="menu" class="menu menu-left">
+                    {volist name='navbar' id='vo'}
+                        <li class="menu-item menu-item-home">
+                            <a href="{$vo['url']}" rel="section">{$vo['title']}</a>
+                        </li>
+                    {/volist}
+                </ul>
+
+                <div class="site-search">
+
+                <input type="text" id="st-search-input" name="s" class="st-search-input st-default-search-input"
+                       autocomplete="off" autocorrect="off" autocapitalize="off" value=""/>
+
+                </div>
+            </nav>
+        </div>
+    </header>

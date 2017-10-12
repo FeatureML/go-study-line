@@ -21,6 +21,8 @@ class AliPay extends Controller
      */
     public function show()
     {
+        //临时关闭当前模板的布局功能
+        $this->view->engine->layout(false);
         $res = db('alipay')->where('id', input('get.id','3'))->find();
         $this->assign('info',$res);
         return $this->fetch("index");

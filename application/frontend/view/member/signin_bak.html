@@ -1,0 +1,65 @@
+<div class="container">
+    <div class="site-login">
+        <div class="page-header">
+            <h1>登录</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-5">
+                <form id="login-form" action="/login" method="post">
+                    <input type="hidden" name="_csrf"
+                           value="8N5w94XzRLy7KC0ndAuGe-2PDYnYcORTogfS_IGzEDru0aBGaROG2X2frhQ_Za8Ggj7omjTS2hizMUcncTzeRA==">
+                    <div class="form-group field-loginform-username required has-success">
+                        <label class="control-label" for="loginform-username">用户名</label>
+                        <input type="text" id="loginform-username" class="form-control" name="LoginForm[username]"
+                               placeholder="用户名/电子邮箱" autocomplete="off" aria-required="true" aria-invalid="false">
+
+                        <div class="help-block"></div>
+                    </div>
+                    <div class="form-group field-loginform-password required has-success">
+                        <label class="control-label" for="loginform-password">密码</label>
+                        <input type="password" id="loginform-password" class="form-control" name="LoginForm[password]"
+                               autocomplete="off" aria-required="true" aria-invalid="false">
+
+                        <div class="help-block"></div>
+                    </div>
+                    <div class="form-group field-loginform-rememberme">
+
+                        <input type="hidden" name="LoginForm[rememberMe]" value="0"><label>
+                        <input type="checkbox" id="loginform-rememberme" name="LoginForm[rememberMe]" value="1" checked="">
+                        记住我的登录状态</label>
+
+                        <div class="help-block"></div>
+                    </div>
+                    <div style="color:#999;margin:1em 0">
+                        如果您忘记密码，请<a href="/request-password-reset">点此重置</a>。
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" name="login-button">登录</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-5 pull-right">
+                <div id="w0">
+                    <ul class="auth-clients">
+                        <li class="auth-client"><a class="auth-link" href="/auth?authclient=qq" title="QQ 登录"><span
+                                class="auth-icon fa fa-qq fa-2x"></span></a></li>
+                        <li class="auth-client"><a class="auth-link" href="/auth?authclient=weibo" title="微博登录"><span
+                                class="auth-icon fa fa-weibo fa-2x"></span></a></li>
+                        <li class="auth-client"><a class="auth-link" href="/frontend/open_auth/github"
+                                                   title="GitHub 登录"><span class="auth-icon fa fa-github fa-2x"></span></a>
+                        </li>
+                    </ul>
+                </div>
+                没有帐号？ <a href="/signup">注册新会员</a>
+                <h2>登录后可以？</h2>
+                <ol>
+                    <li>分享您的教程，扩展，源码</li>
+                    <li>参与问题和帖子的讨论，回复和评分</li>
+                    <li>收藏具有价值的教程和帖子</li>
+                    <li>发布招聘信息、找工作</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>

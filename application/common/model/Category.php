@@ -3,18 +3,16 @@
  * |  Github: https://github.com/Tinywan
  * |  Blog: http://www.cnblogs.com/Tinywan
  * |-------------------------------------------------------------------
- * |  Author: Tinywan(SHaoBo Wan)
- * |  Date: 2017/1/20
- * |  Time: 16:25
+ * |  Author: Tinywan(ShaoBo Wan)
+ * |  DateTime: 2017/9/10 16:43
  * |  Mail: Overcome.wan@Gmail.com
- * |  Created by PhpStorm.
+ * |  Created by PhpStorm
  * '-------------------------------------------------------------------*/
 namespace app\common\model;
 
 use houdunwang\arr\Arr;
-use think\Model;
 
-class Category extends Model
+class Category extends BaseModel
 {
     protected $pk = "id";
     protected $table = "resty_category"; //完整的表名
@@ -73,6 +71,12 @@ class Category extends Model
 
     }
 
+    /**
+     * 获取二级分类
+     * @param $allData
+     * @param $id
+     * @return array
+     */
     public function getSubCategory($allData, $id)
     {
         static $tmp = [];
@@ -85,6 +89,11 @@ class Category extends Model
         return $tmp;
     }
 
+    /**
+     * 删除
+     * @param $id
+     * @return array
+     */
     public function del($id)
     {
         //1 获取当前删除数据id 的pid的值

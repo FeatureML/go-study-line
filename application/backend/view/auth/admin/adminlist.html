@@ -1,0 +1,143 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active">
+                    <a data-toggle="tab" href="#admin-list">
+                        <i class="green icon-home bigger-110"></i>
+                        管理员列表
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="admin-list" class="tab-pane in active">
+                    <table class="table table-border table-bordered table-bg">
+                        <thead>
+                        <tr class="text-c">
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>所属户组</th>
+                            <th>邮箱</th>
+                            <th>排序</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name='lists' id='user'}
+                        <tr class="text-c" id="data-{$user.id}">
+                            <td>{$user.id}</td>
+                            <td>{$user.username}</td>
+                            <td>{$user.title}</td>
+                            <td>{$user.email}</td>
+                            <td>{$user.status}</td>
+                            <td>{$user.email}</td>
+                            <td>
+                                <a href="{:url('backend/auth.admin/updategroup',['id'=>$user['id']])}">
+                                    <button class="btn btn-warning btn-xs">
+                                        <i class="icon-folder-open"></i>修改用户组
+                                    </button>
+                                </a>
+                                <a href="{:url('backend/auth.admin/edit',['id'=>$user['id']])}">
+                                    <button class="btn btn-primary btn-xs">
+                                        <i class="icon-edit"></i>编辑
+                                    </button>
+                                </a>
+                                <a href="javascript:delHanderModal({$user['id']});" class="btn btn-danger btn-xs">
+                                    <i class="icon-trash"></i>删除
+                                </a>
+                                <a href="{:url('backend/auth.admin/sendMail',['id'=>$user['id']])}">
+                                    <button class="btn btn-info btn-xs">
+                                        <i class="icon-trash"></i>发送邮件
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div><!-- /span -->
+
+</div><!-- /row -->
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="delHanderModal" tabindex="-1" role="dialog" aria-labelledby="delHanderModal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title "><i class="icon-lightbulb bigger-110"></i> &nbsp;提示信息!</h4>
+            </div>
+            <div class="modal-body">
+                <h4>
+                    确定要删除吗？
+                </h4>
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-danger del-hander">确定</a>
+                <a type="button" class="btn btn-success" data-dismiss="modal">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Success before include CommonJS
+    function successShow($msg) {
+        $("#auth-image").attr('src', '__COMMON__/images/success.svg');
+        $(".auth-msg").html($msg);
+        $("#authHanderModal").modal("show");
+    }
+
+    // Fail before include CommonJS
+    function failShow($msg) {
+        $(".modal-body").css("color", "red");
+        $("#auth-image").attr('src', '__COMMON__/images/error.svg');
+        $(".auth-msg").html($msg);
+        $("#authHanderModal").modal("show");
+    }
+
+    var $tag_id;
+    function delHanderModal(id) {
+        $tag_id = id;
+        $("#delHanderModal").modal("show");
+    }
+    $(document).ready(function () {
+        $('body').delegate('.del-hander', 'click', function () {
+            $("#delHanderModal").modal("hide");
+            var $url = "{:url('backend/auth.admin/delete')}";
+            var $_data = {
+                'id': $tag_id
+            };
+            $.ajax({
+                url: $url,
+                type: 'post',
+                data: $_data,
+                dataType: "json",
+                //服务器成功响应处理函数
+                success: function ($response) {
+                    console.log($response)
+                    if ($response.code == 200) {
+                        successShow($response.msg);
+                        $('#data-' + $tag_id).remove();
+                    } else {
+                        failShow($response.msg);
+                    }
+                },
+                //服务器响应失败处理函数
+                error: function (data, status, e) {
+                    alert(e);
+                }
+            })
+        });
+    });
+</script>

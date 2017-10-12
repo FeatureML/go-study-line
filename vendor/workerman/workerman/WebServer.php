@@ -234,7 +234,7 @@ class WebServer extends Worker
         $info = stat($file_path);
         $modified_time = $info ? date('D, d M Y H:i:s', $info['mtime']) . ' ' . date_default_timezone_get() : '';
         if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $info) {
-            // Http 304.
+            // http 304.
             if ($modified_time === $_SERVER['HTTP_IF_MODIFIED_SINCE']) {
                 // 304
                 Http::header('HTTP/1.1 304 Not Modified');
@@ -244,7 +244,7 @@ class WebServer extends Worker
             }
         }
 
-        // Http header.
+        // http header.
         if ($modified_time) {
             $modified_time = "Last-Modified: $modified_time\r\n";
         }

@@ -1,17 +1,23 @@
 <?php
 return [
-    'app_status'          => 'office',    //home office
+    'app_status'          => 'office',    //home office  通过这里可以切换配置文件home.php 和office.php的配置文件
     'app_author'          => 'Tinywan',
     'app_email'          => '756684177@qq.com',
     'app_debug'              => true,
-//    // 入口自动绑定模块
-//    'auto_bind_module'       => true,
-//    // 是否开启路由
+    // 默认的空控制器名
+    'empty_controller'       => 'Error',
+    // 入口自动绑定模块
+    //'auto_bind_module'       => true,
+    // 是否开启路由
     'url_route_on'           => true,
-//    // 是否强制使用路由
-//    'url_route_must'         => false
+    // 设置路由配置文件列表
+    'route_config_file'	=>	['frontend','backend','blog'],
+    // 域名根，如thinkphp.cn
+    'url_domain_root'        => 'tinywan.top',
+    // 是否强制使用路由
+    // 'url_route_must'         => false
     // 默认模块名
-    'default_module'         => 'frontend',
+    'default_module'         => 'blog',
     // 是否自动转换URL中的控制器和操作名
     'url_convert'            => false,
     'captcha'  => [
@@ -37,4 +43,7 @@ return [
     ],
     //独立配置文件数据库配置文件
     'extra_config_list'     => ['database','session'],
+    // 默认跳转页面对应的模板文件
+    'dispatch_success_tmpl'  => APP_PATH . 'common' . DS . 'view' . DS . 'tpl' . DS . 'dispatch_jump.tpl',
+    'dispatch_error_tmpl'    => APP_PATH . 'common' . DS . 'view' . DS . 'tpl' . DS . 'dispatch_jump.tpl',
 ];

@@ -150,11 +150,11 @@ class GithubTest extends \PHPUnit_Framework_TestCase
         $nickname = uniqid();
         $email = uniqid();
 
-        $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
+        $postResponse = m::mock('Psr\http\Message\ResponseInterface');
         $postResponse->shouldReceive('getBody')->andReturn('access_token=mock_access_token&expires=3600&refresh_token=mock_refresh_token&otherKey={1234}');
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'application/x-www-form-urlencoded']);
 
-        $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
+        $userResponse = m::mock('Psr\http\Message\ResponseInterface');
         $userResponse->shouldReceive('getBody')->andReturn('[{"email":"mock_email_1","primary":false,"verified":true},{"email":"mock_email_2","primary":false,"verified":true},{"email":"mock_email_3","primary":true,"verified":true}]');
         $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
 

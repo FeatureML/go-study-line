@@ -12,13 +12,12 @@
 
 namespace app\backend\controller;
 
+use app\common\controller\BaseBackend;
 use app\common\model\Admin;
-use Faker\Provider\Uuid;
-use think\Controller;
 use think\Db;
 use think\Request;
 
-class Entry extends Common
+class Entry extends BaseBackend
 {
     //个人
     public function index()

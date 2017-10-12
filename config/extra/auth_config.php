@@ -14,8 +14,10 @@ return [
     'auth_group_access' => 'auth_group_access',
     'auth_rule' => 'auth_rule',
     'auth_user' => 'user',
+    // 全部为小写
     'open_auth' => [
-        'Entry/index',
-        'Entry/modpass'
+        'entry/index',
+        'entry/modpass',
+        'login/Login'
     ]
 ];

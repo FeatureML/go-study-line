@@ -20,7 +20,7 @@ class UdpConnection extends ConnectionInterface
 {
     /**
      * Application layer protocol.
-     * The format is like this Workerman\\Protocols\\Http.
+     * The format is like this Workerman\\Protocols\\http.
      *
      * @var \Workerman\Protocols\ProtocolInterface
      */

@@ -41,13 +41,26 @@
         "houdunwang/arr": "^1.0",
         "phpoffice/phpexcel": "^1.8",
         "league/oauth2-github": "^2.0",
+        "flc/alidayu": "^2.0",
+        "aliyuncs/oss-sdk-php": "^2.2",
         "chrisboulton/php-resque": "1.2.x",
-        "flc/alidayu": "^2.0"
+        "topthink/think-image": "^1.0",
+        "elasticsearch/elasticsearch": "^5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Openresty\\": "vendor/phplua",
+            "AliyunMNS\\": "vendor/aliyun/AliyunMNS",
+            "QUEUE\\": "vendor/queue"
+        }
     },
     "extra": {
         "think-path": "thinkphp"
     },
     "config": {
         "preferred-install": "dist"
+    },
+    "require-dev": {
+        "eaglewu/swoole-ide-helper": "dev-master"
     }
 }

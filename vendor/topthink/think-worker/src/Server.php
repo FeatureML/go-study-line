@@ -23,7 +23,7 @@ abstract class Server
     protected $protocol  = 'http';
     protected $host      = '0.0.0.0';
     protected $port      = '2346';
-    protected $processes = 4;
+    protected $processes = 1;
 
     /**
      * 架构函数

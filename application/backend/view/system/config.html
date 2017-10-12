@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="tabbable">
-            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
+            <ul class="nav nav-tabs" id="myTab">
                 <li class="active">
                     <a data-toggle="tab" href="#basic-config">
                         <i class="blue  icon-cogs bigger-110"></i>
@@ -10,8 +10,15 @@
                 </li>
 
                 <li>
+                    <a data-toggle="tab" href="#develop-config">
+                        <i class="blue   icon-laptop bigger-110"></i>
+                        开发配置
+                    </a>
+                </li>
+
+                <li>
                     <a data-toggle="tab" href="#auth-config">
-                        <i class="blue  icon-cogs bigger-110"></i>
+                        <i class="red  icon-cogs bigger-110"></i>
                         权限配置
                     </a>
                 </li>
@@ -35,14 +42,18 @@
                         支付配置</a>
                 </li>
 
-
+                <li>
+                    <a data-toggle="tab" href="#storage-config">
+                        <i class="red icon-cloud bigger-110"></i>
+                        存储配置</a>
+                </li>
             </ul>
 
             <div class="tab-content">
                 <!-- 基本配置 -->
                 <div id="basic-config" class="tab-pane in active">
                     <!-- PAGE CONTENT BEGINS -->
-                    <form action="{:url('backend/system/basicconfig')}" method="post" class="form-horizontal"
+                    <form action="" method="post" class="form-horizontal"
                           role="form">
                         <table class="table table-border table-bordered table-bg mt-20">
                             <tr>
@@ -50,37 +61,44 @@
                                         class="label label-xlg arrowed-right arrowed-in-right">网站基本信息配置</span></th>
                             </tr>
                             <tr>
+                                <td width='10%' align='right'>网站域名：</td>
+                                <td>
+                                    <input type="text" class="col-sm-6" name='webdomain' id="web-domain"
+                                           value='{$Think.config.webinfo.WEBDOMAIN}'/>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td width='10%' align='right'>网站名称：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='webname'
+                                    <input type="text" class="col-sm-6" name='webname' id="web-name"
                                            value='{$Think.config.webinfo.WEBNAME}'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>网站关键词：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='keywords'
+                                    <input type="text" class="col-sm-6" name='keywords' id="keywords"
                                            value='{$Think.config.webinfo.KEYWORDS}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>网站描述：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='discription'
+                                    <input type="text" class="col-sm-6" name='discription' id="discription"
                                            value='{$Think.config.webinfo.DISCRIPTION}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>版权信息</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='copy' value='{$Think.config.webinfo.COPY}'
+                                    <input type="text" class="col-sm-6" name='copy' id="copy" value='{$Think.config.webinfo.COPY}'
                                            class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>备案号：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='record'
+                                    <input type="text" class="col-sm-6" name='record' id="record"
                                            value='{$Think.config.webinfo.RECORD}' class='len400'/>
                                 </td>
                             </tr>
@@ -110,17 +128,53 @@
                                     </label>
                                 </td>
                             </tr>
+
                             <tr>
-                                <td align='right'>环境切换：</td>
+                                <td colspan='2' align='center' height='60'>
+                                    <a type="button" class="btn btn-success basic-config-hander"
+                                       style="width: 75px">保存</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                    <!-- PAGE CONTENT ENDS -->
+
+                    <!-- PAGE CONTENT ENDS -->
+                </div>
+
+                <!-- 邮箱配置 -->
+                <div id="develop-config" class="tab-pane">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <form action="{:url('backend/system/developmentConfig')}" method="post" class="form-horizontal"
+                          role="form">
+                        <table class="table table-border table-bordered table-bg mt-20">
+                            <tr>
+                                <th colspan='2'><span
+                                        class="label label-xlg arrowed-right arrowed-in-right">当前配置环境：</span>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width='10%' align='right'>环境切换：</td>
                                 <td>
                                     <label for="o1">
-                                        <input type="radio" id='o1' name='env' value='1' {if
-                                               condition='$Think.config.webinfo.WEB_STATE' }checked='checked' {/if}/>&nbsp;线上
+                                        <input type="radio" id='app_status1' name='app_status' value='production' {if
+                                               condition="$Think.config.app_status == 'production'" } checked='checked'
+                                               {/if}/>&nbsp;生产
                                     </label>&nbsp;&nbsp;
-                                    <label for="o0">
-                                        <input type="radio" id='o0' name='env' value='0' {if
-                                               condition='$Think.config.webinfo.WEB_STATE neq 1' }checked='checked' {/if}/>&nbsp;测试
-                                    </label>
+                                    <label for="o1">
+                                        <input type="radio" id='app_status2' name='app_status' value='development' {if
+                                               condition="$Think.config.app_status == 'development'" }checked='checked'
+                                               {/if}/>&nbsp;开发
+                                    </label>&nbsp;&nbsp;
+                                    <label for="o1">
+                                        <input type="radio" id='app_status3' name='app_status' value='office' {if
+                                               condition="$Think.config.app_status == 'office'" }checked='checked' {/if}/>&nbsp;公司
+                                    </label>&nbsp;&nbsp;
+                                    <label for="o1">
+                                        <input type="radio" id='app_status4' name='app_status' value='home' {if
+                                               condition="$Think.config.app_status == 'home'" }checked='checked' {/if}/>&nbsp;家里
+                                    </label>&nbsp;&nbsp;
+
                                 </td>
                             </tr>
                             <tr>
@@ -131,7 +185,6 @@
                         </table>
                     </form>
                     <!-- PAGE CONTENT ENDS -->
-                    <!-- PAGE CONTENT BEGINS -->
                     <form action="{:url('backend/system/sessionconfig')}" method="post" class="form-horizontal"
                           role="form">
                         <table class="table table-border table-bordered table-bg mt-20">
@@ -142,25 +195,29 @@
                             <tr>
                                 <td width='10%' align='right'>存储方式：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='type'  disabled="disabled" value='{$Think.config.session.type}'/>
+                                    <input type="text" class="col-sm-6" name='type' disabled="disabled"
+                                           value='{$Think.config.session.type}'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>主机：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='host' value='{$Think.config.session.host}' class='len400'/>
+                                    <input type="text" class="col-sm-6" name='host' value='{$Think.config.session.host}'
+                                           class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>端口号：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='port' value='{$Think.config.session.port}' class='len400'/>
+                                    <input type="text" class="col-sm-6" name='port' value='{$Think.config.session.port}'
+                                           class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>密码：</td>
                                 <td>
-                                    <input type="text" class="col-sm-6" name='password' value='{$Think.config.session.password}' class='len400'/>
+                                    <input type="text" class="col-sm-6" name='password'
+                                           value='{$Think.config.session.password}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
@@ -191,9 +248,9 @@
                             </tr>
                         </table>
                     </form>
-                    <!-- PAGE CONTENT ENDS -->
                 </div>
 
+                <!-- 权限配置 -->
                 <div id="auth-config" class="tab-pane">
                     <!-- PAGE CONTENT BEGINS -->
                     <form action="{:url('backend/system/authconfig')}" method="post" class="form-horizontal">
@@ -205,49 +262,60 @@
                             <tr>
                                 <td align='right'>开关：</td>
                                 <td>
-                                    <input type="text" class="col-sm-3" name='auth_on' value='{$Think.config.auth_config.auth_on}' class='len400'/>
+                                    <input type="text" class="col-sm-3" name='auth_on'
+                                           value='{$Think.config.auth_config.auth_on}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td width='10%' align='right'>表前缀：</td>
                                 <td>
-                                    <input type="text" class="col-sm-3" name='db_prefix' value='{$Think.config.auth_config.db_prefix}' class='len400'/>
+                                    <input type="text" class="col-sm-3" name='db_prefix'
+                                           value='{$Think.config.auth_config.db_prefix}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>auth_type：</td>
                                 <td>
-                                    <input type="text" class="col-sm-3" name='auth_type' value='{$Think.config.auth_config.auth_type}' class='len400'/>
+                                    <input type="text" class="col-sm-3" name='auth_type'
+                                           value='{$Think.config.auth_config.auth_type}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>auth_group：</td>
                                 <td>
-                                    <input type="text" class="col-sm-3" name='auth_group' value='{$Think.config.auth_config.auth_group}' class='len400'/>
+                                    <input type="text" class="col-sm-3" name='auth_group'
+                                           value='{$Think.config.auth_config.auth_group}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>auth_group_access：</td>
                                 <td>
-                                    <input type="text" class="col-sm-3" name='auth_group_access' value='{$Think.config.auth_config.auth_group_access}' class='len400'/>
+                                    <input type="text" class="col-sm-3" name='auth_group_access'
+                                           value='{$Think.config.auth_config.auth_group_access}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>auth_rule：</td>
                                 <td>
-                                    <input type="text" class="col-sm-3" name='auth_rule' value='{$Think.config.auth_config.auth_rule}' class='len400'/>
+                                    <input type="text" class="col-sm-3" name='auth_rule'
+                                           value='{$Think.config.auth_config.auth_rule}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>auth_user：</td>
                                 <td>
-                                    <input type="text" class="col-sm-3" name='auth_user' value='{$Think.config.auth_config.auth_user}' class='len400'/>
+                                    <input type="text" class="col-sm-3" name='auth_user'
+                                           value='{$Think.config.auth_config.auth_user}' class='len400'/>
                                 </td>
                             </tr>
                             <tr>
                                 <td align='right'>open_auth：</td>
                                 <td>
-                                    <textarea name="open_auth" id="" class="col-sm-3" cols="30" rows="10">{$open_auth}</textarea>
+                                    <span class="label label-lg label-warning"><i
+                                            class="icon-warning-sign bigger-120"></i> 多个权限之间用","分隔</span>
+                                    <p></p>
+                                    <textarea style="font-size: 16px;" name="open_auth" id="" class="col-sm-3" cols="30"
+                                              rows="10">{$Think.config.auth_config.open_auth|implode=','}</textarea>
                                 </td>
                             </tr>
                             <tr>
@@ -280,8 +348,8 @@
                             <tr>
                                 <td align='right'>smtp：</td>
                                 <td>
-                                    <input class="col-sm-3" type="text" name='EMAIL_SMTP'
-                                           value='{$Think.config.email.EMAIL_SMTP}'
+                                    <input class="col-sm-3" type="text" name='EMAIL_SMTP_HOST'
+                                           value='{$Think.config.email.EMAIL_SMTP_HOST}'
                                            class='len400'/>
                                 </td>
                             </tr>
@@ -340,7 +408,7 @@
                     </form>
                     <!-- PAGE CONTENT ENDS -->
                 </div>
-
+                <!-- 微信配置 -->
                 <div id="wechat-config" class="tab-pane">
                     <!-- PAGE CONTENT BEGINS -->
                     <form action="{:url('backend/system/wechatconfig')}" method="post" class="form-horizontal"
@@ -375,6 +443,7 @@
                     <!-- PAGE CONTENT ENDS -->
                 </div>
 
+                <!-- 支付配置 -->
                 <div id="pay-config" class="tab-pane">
                     <!-- PAGE CONTENT BEGINS -->
                     <form action="{:url('backend/system/payconfig')}" method="post" class="form-horizontal" role="form">
@@ -440,7 +509,118 @@
                     <!-- PAGE CONTENT ENDS -->
                 </div>
 
+                <!-- 存储配置 -->
+                <div id="storage-config" class="tab-pane">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <form action="{:url('backend/system/storageConfig')}" method="post" class="form-horizontal" role="form">
+                        <table class="table table-border table-bordered table-bg mt-20">
+                            <tr>
+                                <th colspan='2'>
+                                    <span class="label label-xlg arrowed-right arrowed-in-right">OSS配置</span></th>
+                            </tr>
+                            <tr>
+                                <td width='10%' align='right'>accessKeyId：</td>
+                                <td>
+                                    <input class="col-sm-3" type="text" name='accessKeyId'
+                                           value='{$Think.config.aliyun_oss.ACCESSKEYID}'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align='right'>accessKeySecret：</td>
+                                <td>
+                                    <input class="col-sm-3" type="text" name='accessKeySecret'
+                                           value='{$Think.config.aliyun_oss.ACCESSKEYSECRET}'
+                                           class='len400'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align='right'>endpoint：</td>
+                                <td>
+                                    <input class="col-sm-3" type="text" name='endpoint'
+                                           value='{$Think.config.aliyun_oss.ENDPOINT}'
+                                           class='len400'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align='right'>bucket：</td>
+                                <td>
+                                    <input type="text" class="col-sm-3" name='bucket'
+                                           value='{$Think.config.aliyun_oss.BUCKET}'
+                                           class='len400'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align='right'>domain：</td>
+                                <td>
+                                    <input type="text" class="col-sm-3" name='domain'
+                                           value='{$Think.config.aliyun_oss.DOMAIN}'
+                                           class='len400'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan='2' align='center' height='60'>
+                                    <input type="submit" value='保存' class='btn btn-success'/>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                    <!-- PAGE CONTENT ENDS -->
+                </div>
             </div>
         </div>
     </div><!-- /span -->
 </div><!-- /row -->
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Success before include CommonJS
+        function successShow($msg) {
+            $("#auth-image").attr('src', '__COMMON__/images/success.svg');
+            $(".auth-msg").html($msg);
+            $("#authHanderModal").modal("show");
+        }
+
+        // Fail before include CommonJS
+        function failShow($msg) {
+            $(".modal-body").css("color", "red");
+            $("#auth-image").attr('src', '__COMMON__/images/error.svg');
+            $(".auth-msg").html($msg);
+            $("#authHanderModal").modal("show");
+        }
+
+        // 基本信息修改
+        $('body').delegate('.basic-config-hander', 'click', function () {
+            var $url = "{:url('backend/system/basicconfig')}";
+            var $_data = {
+                'webdomain': $("#web-domain").val(),
+                'webname': $("#web-name").val(),
+                'keywords': $("#keywords").val(),
+                'discription': $("#discription").val(),
+                'copy': $("#copy").val(),
+                'record': $("#record").val(),
+                'regis_on': $('input:radio[name=regis_on]:checked').val(),
+                'web_state': $("input:radio[name=web_state]:checked").val(),
+            };
+            console.log($_data);
+            $.ajax({
+                url: $url,
+                type: 'post',
+                data: $_data,
+                dataType: "json",
+                //服务器成功响应处理函数
+                success: function ($response) {
+                    if ($response.code == 200) {
+                        successShow($response.msg);
+                    } else {
+                        failShow($response.msg);
+                    }
+                },
+                //服务器响应失败处理函数
+                error: function (data, status, e) {
+                    alert(e);
+                }
+            })
+        });
+        // 有时间继续修改
+    });
+</script>

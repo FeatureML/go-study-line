@@ -1,11 +1,6 @@
-# thinkphp5-study-line
-+ thinkphp5-study-line
-+ ffmpeg
-+ MissYang Linux 1.1
-+ MissYang Linux 2.0
-+ MissYang Linux 3.4
-+ MissYang Linux 4.4
-+ MissYang Linux 5.8
+##  分支管理
++  当前默认分支为Develop分支(Update Default Branch is Develop)
++  以后开发的代码全部提交到Develop分支，Master分支只负责发布版本
 
 ##  定义独立的配置目录 .
 ```bash
@@ -23,6 +18,7 @@
 +   master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活
 ##  微信
 +   网页授权
++   MisssYang
 +   MisssYang
 
 ##   PHPer这样写代码也许更优雅
@@ -65,12 +61,12 @@
 +   a 连接：`<a href="{:url('backend/entry/modpass')}">`
 +   from 表单提交：`<form action="/backend/login/forgotPassword" method="post">`
 ##  控制器
-+   命令行新建控制器：``
-
++   命令行新建控制器：
 ## 功能添加
 +   邮箱注册、登录、找回密码、忘记密码功能
 +   分类管理
 +   支付宝即时到账
++   阿里大于短信发送
 ##  Auth 权限系统
 +   分支：auth
 ##  Excel 表格数据导出功能
@@ -81,6 +77,12 @@
 +  携带参数
 +  回调地址
 +  封装成一个Model
-
+##  GoEath007 README
++  第一次提交代码注释
++  163邮箱注册
+##  AI 分支功能管理
++   Linux shell 监控
++   多级控制器访问规则：`auth.authgroup/grouplist`
++   (1)公司新建本地Develop分支，以及提交到Develop远程分支,控制器访问规则：`auth.authgroup/grouplist`
 
 

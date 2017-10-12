@@ -1,0 +1,47 @@
+<div class="row">
+    <div class="col-sm-12">
+                    <table class="table table-border table-bordered table-bg">
+                        <thead>
+                        <tr class="text-c">
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>PID</th>
+                            <th>排序</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach name='categorys' key='key' item='vo'}
+                        <tr class="text-c">
+                            <td>{$vo["id"]}</td>
+                            <td>{$vo["_name"]}</td>
+                            <td>{$vo["pid"]}</td>
+                            <td>{$vo["level"]}</td>
+                            <td>{$vo["remark"]}</td>
+                            <td>
+                                <a href="{:url('backend/auth.auth_group/subpage',['id'=>$vo['id']])}">
+                                    <button class="btn btn-success btn-sm">
+                                        <i class="icon-folder-open"></i>添加二级
+                                    </button>
+                                </a>
+                                <a href="{:url('backend/auth.auth_group/edit',['id'=>$vo['id']])}">
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="icon-edit"></i>编辑
+                                    </button>
+                                </a>
+                                <a href="{:url('backend/auth.auth_group/del',['id'=>$vo['id']])}">
+                                    <button class="btn btn-danger btn-sm">
+                                        <i class="icon-trash"></i>删除
+                                    </button>
+                                </a>
+
+                            </td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+    </div><!-- /span -->
+
+</div><!-- /row -->

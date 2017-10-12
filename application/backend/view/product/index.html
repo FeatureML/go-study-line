@@ -1,0 +1,191 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active">
+                    <a data-toggle="tab" href="#category-list">
+                        <i class="green icon-home bigger-110"></i>
+                        商品列表
+                    </a>
+                </li>
+
+                <li>
+                    <a data-toggle="tab" href="#category-add">
+                        <i class="green icon-home bigger-110"></i>
+                        商品添加
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="tab-content">
+                <div id="category-list" class="tab-pane in active">
+                    <table class="table table-border table-bordered table-bg">
+                        <thead>
+                        <tr class="text-c">
+                            <th>图片</th>
+                            <th>名称</th>
+                            <th>所属分类</th>
+                            <th>编号</th>
+                            <th>价格</th>
+                            <th>时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name='products' id='vo'}
+                        <tr class="text-c">
+                            <td>
+                                <img height="100" width="140" src="{$Think.config.aliyun_oss.DOMAIN}{$vo['path']}" alt="{$vo['pName']}">
+                            </td>
+                            <td>{$vo.pName}</td>
+                            <td>{$vo.cName}</td>
+                            <td><span class="label label-lg label-pink arrowed-right">{$vo.pSn}</span></td>
+                            <td>{$vo.mPrice}</td>
+                            <td>{$vo.pubTime}</td>
+                            <td>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="category-add" class="tab-pane left">
+                    <form class="form-horizontal" role="form" action="{:url('backend/Product/store')}"
+                          enctype="multipart/form-data" method="post">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 商品名称 </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="pName" placeholder="商品名称" value="商品名称1"
+                                       class="col-xs-10 col-sm-5" name="pName"/>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 商品货号 </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" name="pSn" id="pSn" placeholder="商品货号" class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 商品数量 </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" name="pNum" placeholder="商品数量" value="10000"
+                                       class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1">商品价格 </label>
+
+                            <div class="col-sm-9">
+                                <input type="text" name="mPrice" placeholder="商品价格" value="100"
+                                       class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 商品分类 </label>
+
+                            <div class="col-sm-9">
+                                <select name="cId" id="cId">
+                                    {volist name="categorys" id="vo"}
+                                    <option value="{$vo['id']}">{$vo['_name']}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"> 预览区域 </label>
+
+                            <div class="col-sm-9" id="js-image">
+
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"> 上传图片 </label>
+                            <div class="col-sm-9">
+                                <input type="file" name="photo_upload" id="photo_upload" multiple="true"/>
+                                <input type="hidden" name="file_id" id="file_id">
+                            </div>
+                        </div>
+
+                        <div class="space-4"></div>
+                        <div class="clearfix form-actions">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button class="btn btn-info" type="submit">
+                                    提交
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div><!-- /span -->
+
+</div><!-- /row -->
+<script src="__COMMON__/js/uploadify/jquery.uploadify-3.1.min.js"></script>
+<script type="text/javascript">
+    $(function ($) {
+        var $cid = $('#cId').val();
+        console.log('cid = '+$cid);
+        var sessionId = "{:session_id()}";
+        var uploaderUrl = "{:url('backend/product/productUploadImage')}";
+        var swfUrl = "__COMMON__/js/uploadify/uploadify.swf";
+        $('#photo_upload').uploadify({
+            'auto': true,//关闭自动上传
+            'removeTimeout': 1,//文件队列上传完成1秒后删除
+            'swf': swfUrl,
+            'uploader': uploaderUrl,
+            'width': 320,//上传按钮样式
+            'height': 100,
+            'buttonImage': "__COMMON__/images/uploadfile.png",  //上传按钮背景图地址
+            //'buttonText': '点击上传商品图片',//设置按钮文本
+            'method': 'post',//方法，服务端可以用$_POST数组获取数据
+            'multi': true,//允许同时上传多张图片
+            'uploadLimit': 6,//一次最多只允许上传10张图片
+            'fileTypeDesc': 'Image Files',//只允许上传图像,选择文件提示文字
+            'fileObjName': 'file',
+            'fileTypeExts': '*.gif; *.jpg; *.png',//限制允许上传的图片后缀
+            'fileSizeLimit': '10048576KB',//限制上传的图片不得超过200KB
+            'formData': {'session_id': sessionId},
+            'onUploadSuccess': function (file, data, response)  //每次成功上传后执行的回调函数，从服务端返回数据到前端
+            {
+                console.log('---------1-------------'+data);
+                var data = JSON.parse(data); //由JSON字符串转换为JSON对象，json转成object
+                console.log('--------2---------------'+data.code);
+                if (data.code == 200) {
+                    var img = "<img src=" + data.path + " width='140' style='border: 1px solid #F25D03;' height='100' class='img-rounded'/>";
+                    img = $(img);
+                    img.appendTo($('#js-image'));
+                    $('input[name=file_id]').val(data.fileId);
+
+                } else {
+                    alert(data.msg);
+                    return false;
+                }
+            },
+            'onQueueComplete': function (queueData) {
+                //上传队列全部完成后执行的回调函数
+                // if(img_id_upload.length>0)
+//                 alert('成功上传的文件有：'+encodeURIComponent(img_id_upload));
+            }
+            // Put your options here
+        });
+    });
+</script>

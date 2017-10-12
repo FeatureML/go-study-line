@@ -1,17 +1,23 @@
 <?php
+/** .-------------------------------------------------------------------
+ * |  Github: https://github.com/Tinywan
+ * |  Blog: http://www.cnblogs.com/Tinywan
+ * |-------------------------------------------------------------------
+ * |  Author: Tinywan(ShaoBo Wan)
+ * |  DateTime: 2017/9/10 16:43
+ * |  Mail: Overcome.wan@Gmail.com
+ * |  Created by PhpStorm
+ * '-------------------------------------------------------------------*/
 
 namespace app\common\model;
 
-use function EasyWeChat\Payment\get_client_ip;
-use Faker\Factory;
-use houdunwang\crypt\Crypt;
+use think\Db;
 use think\Loader;
 use think\Log;
-use think\Model;
 use think\Queue;
 use think\Validate;
 
-class Admin extends Model
+class Admin extends BaseModel
 {
     /**
      * 主键
@@ -25,55 +31,6 @@ class Admin extends Model
      */
     protected $table = "resty_user";
 
-    /**
-     * 获取随机姓名
-     * @return string
-     * @static
-     */
-    public static function getRandUserName()
-    {
-        $faker = Factory::create($locale = 'zh_CN');
-        return $faker->country . '-' . $faker->name;
-    }
-
-    /**
-     * 发送邮件队列
-     */
-    public function sendMailQueue($data = [])
-    {
-        /**
-         * 1、当前任务将由哪个类来负责处理（job目录的Mail类）
-         *    当轮到该任务时，系统将生成一个该类的实例，并调用其 fire 方法
-         */
-        $jobHandlerClassName = 'application\backend\job\Mail';
-        /**
-         * 2.当前任务归属的队列名称，如果为新队列，会自动创建
-         */
-        $jobQueueName = "helloJobQueue";
-        /**
-         * 3、当前任务所需的业务数据 . 不能为 resource 类型，其他类型最终将转化为json形式的字符串
-         *   jobData 为对象时，需要在先在此处手动序列化，否则只存储其public属性的键值对
-         */
-        //$jobData = ['ts' => time(), 'bizId' => uniqid(), 'a' => 1];
-        $emailSendDomain = config('email.EMAIL_SEND_DOMAIN');
-        $jobData = ["mail" => "1722318623@qq.com", "str" => "http://{$emailSendDomain}/backend/login/emailRegisterUrlValid"];
-        Log::error("[1]开始发布邮件队列 " . json_encode($jobData));
-        /**
-         *  4、将该任务推送到消息队列，等待对应的消费者去执行
-         */
-        $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
-        /**
-         * 5、返回值
-         *  [1]database 驱动时，返回值为 1|false
-         *  [2]redis 驱动时，返回值为 随机字符串|false
-         */
-        if ($isPushed !== false) {
-            Log::error("[2]邮件队列发布结果：" . $isPushed);
-            return date('Y-m-d H:i:s') . "11 a new Hello Job is Pushed to the Mail" . "<br>";
-        } else {
-            return 'Oops, something went wrong.';
-        }
-    }
 
     /**
      * 登录验证
@@ -90,6 +47,9 @@ class Admin extends Model
         }
         // 2 验证用户名的正确性 查找不到返回 null
         $infoUser = $this->where("email", $data['email'])->where("password", md5($data['password']))->find();
+        if ($infoUser['deleted'] == 1) {
+            return ['valid' => 0, 'msg' => "该用户已经被冻结"];
+        }
         if (!$infoUser) {
             // 数据库中为匹配到
             return ['valid' => 0, 'msg' => "邮箱或者密码错误"];
@@ -112,7 +72,7 @@ class Admin extends Model
      * @param $data
      * @return array
      */
-    public function emailRegister($data, $scene)
+    public function emailRegister($data)
     {
         // 1 验证数据
         $validate = new Validate([
@@ -130,62 +90,20 @@ class Admin extends Model
         // 2 检测邮箱是否被注册
         $time = time();
         $passwordToken = md5($data['email'] . md5($data['password']) . $time); //创建用于激活识别码
-        $userInfo = $userInfo = $this->where('email', $data['email'])->find();
+        $userInfo = Db::table('resty_user')->where("enable=:enable and email=:email")->bind(['enable' => 1, 'email' => $data['email']])->find();
         if ($userInfo) return ['valid' => 0, 'msg' => "该邮箱已经被注册"];
-        // 3 插入数据库
-        $res = $this->data([
-            'username' => self::getRandUserName(),
-            'password' => md5($data["password"]),
-            'email' => $data["email"],
-            'password_token' => $passwordToken,
-            'loginip' => "127.0.0.1",
-        ])->save();
-        if (!$res) return ['valid' => 0, 'msg' => "数据库添加数据失败"];
-        // 4 发送邮件
-
-        $emailSendDomain = config('email.EMAIL_SEND_DOMAIN');
-        $checkstr = base64_encode($data['email']);
-        $auth_key = get_auth_key($data['email']);
-        $link = "http://{$emailSendDomain}/backend/login/emailRegisterUrlValid?checkstr=$checkstr&auth_key={$auth_key}";
-        if ($scene == "frontend") $link = "http://{$emailSendDomain}/frontend/member/emailRegisterUrlValid?checkstr=$checkstr&auth_key={$auth_key}";
-        $str = <<<html
-            您好！<p></p>
-            感谢您在Tinywan世界注册帐户！<p></p>
-			帐户需要激活才能使用，赶紧激活成为Tinywan家园的正式一员吧:)<p></p>
-            点击下面的链接立即激活帐户(或将网址复制到浏览器中打开):<p></p>
-			$link
-html;
-        $data["str"] = $str;
-        $result = send_email($data["email"], '物联网智能数据 帐户激活邮件--', $str);
-        if ($result['error'] == 1) return ['valid' => 0, 'msg' => "邮件发送失败，请联系管理员"];
-        return ['valid' => 1, 'msg' => $data['email'] . "注册成功，请立即验证邮箱<br/>邮件发送至: " . $data['email']];
-    }
-
-    /**
-     * 邮箱注册
-     * @param $data
-     * @return array
-     */
-    public function emailRegisterCli($data)
-    {
-        // 1 验证数据
-        $validate = new Validate([
-            'email' => 'require|email',
-            'password' => 'require',
-            'repassword' => 'require|confirm:password'
-        ], [
-            'password.require' => "密码不能为空！",
-            'repassword.require' => "两次密码输入不一致！",
-            'repassword.confirm' => "两次密码输入不一致！"
-        ]);
-        if (!$validate->check($data)) {
-            return ['valid' => 0, 'msg' => $validate->getError()];
+        // 考虑URL地址失效问题，重新发送邮件
+        $userInfoEnable = Db::table('resty_user')->where("enable=:enable and email=:email")->bind(['enable' => 0, 'email' => $data['email']])->find();
+        if ($userInfoEnable) {
+            // 4 放入邮件队列
+            $taskData['task_type'] = 2;
+            $taskData['status'] = 0;
+            $taskData['email_type'] = 1;
+            $taskData['email_scene'] = 2;
+            $taskData['user_email'] = $data['email'];
+            Db::table('resty_task_list')->insert($taskData);
+            return ['valid' => 1, 'msg' => "邮件重新发送成功，请立即验证邮箱:" . $data['email']];
         }
-        // 2 检测邮箱是否被注册
-        $time = time();
-        $passwordToken = md5($data['email'] . md5($data['password']) . $time); //创建用于激活识别码
-        $userInfo = $userInfo = $this->where('email', $data['email'])->find();
-        if ($userInfo) return ['valid' => 0, 'msg' => "该邮箱已经被注册"];
         // 3 插入数据库
         $res = $this->data([
             'username' => self::getRandUserName(),
@@ -195,22 +113,13 @@ html;
             'loginip' => "127.0.0.1",
         ])->save();
         if (!$res) return ['valid' => 0, 'msg' => "数据库添加数据失败"];
-        // 4 发送邮件
-
-        $emailSendDomain = config('email.EMAIL_SEND_DOMAIN');
-        $checkstr = base64_encode($data['email']);
-        $auth_key = get_auth_key($data['email']);
-        $link = "http://{$emailSendDomain}/backend/login/emailRegisterUrlValid?checkstr=$checkstr&auth_key={$auth_key}";
-        $str = <<<html
-            您好！<p></p>
-            感谢您在Tinywan世界注册帐户！<p></p>
-			帐户需要激活才能使用，赶紧激活成为Tinywan家园的正式一员吧:)<p></p>
-            点击下面的链接立即激活帐户(或将网址复制到浏览器中打开):<p></p>
-			$link
-html;
-        //传递一个数组，可以实现多邮件发送,有人注册的时候给管理员也同时发送一份邮件
-        $result = send_email($data["email"], '物联网智能数据 帐户激活邮件--', $str);
-        if ($result['error'] == 1) return ['valid' => 0, 'msg' => "邮件发送失败，请联系管理员"];
+        // 4 放入邮件队列
+        $taskData['task_type'] = 2;
+        $taskData['status'] = 0;
+        $taskData['email_type'] = 1;
+        $taskData['email_scene'] = 2;
+        $taskData['user_email'] = $data['email'];
+        Db::table('resty_task_list')->insert($taskData);
         return ['valid' => 1, 'msg' => $data['email'] . "注册成功，请立即验证邮箱<br/>邮件发送至: " . $data['email']];
     }
 
@@ -220,7 +129,7 @@ html;
      * @param $data
      * @return array
      */
-    public function emailRegisterUrlValid($data, $scene)
+    public function emailRegisterUrlValid($data)
     {
         $email = base64_decode($data['checkstr']);
         // 签名验证
@@ -230,20 +139,27 @@ html;
         // 2 验证邮箱
         $userInfo = $this->where('email', $email)->where('enable', 0)->find();
         if (!$userInfo) return ['valid' => 0, 'msg' => "该账户已被激活或者该账户不存在"];
-        // 3、修改数据库字段信息
-        $res = $this->save([
-            'enable' => 1  # 表示已经激活
-        ], [$this->pk => $userInfo['id']]);
-        if (!$res) return ['valid' => 0, 'msg' => "邮件激活失败"];
-        // 4 记录session
-        if ($scene == "frontend") {
-            session('frontend.id', $userInfo['id']);
-            session('frontend.username', $userInfo['username']);
-        } else {
-            session('admin.admin_id', $userInfo['id']);
-            session('admin.username', $userInfo['username']);
+        // 3、修改数据库表：auth_group表和user表
+        // 启动事务
+        Db::startTrans();
+        try {
+            $this->save([
+                'enable' => 1  # 表示已经激活
+            ], [$this->pk => $userInfo['id']]);
+            // 系统默认审核为最低权限
+            $groupData['uid'] = $userInfo['id'];
+            $groupData['group_id'] = 13;
+            Db::table("resty_auth_group_access")->insert($groupData);
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            Log::error("auth_group表和user表修改异常：" . $e->getMessage());
+            return ['valid' => 0, 'msg' => "邮件激活失败"];
         }
-        return ['valid' => 1, 'msg' => "邮箱激活成功，正在跳转到主页面..."];
+        // 4 记录session
+        session('admin.admin_id', $userInfo['id']);
+        session('admin.username', $userInfo['username']);
+        return ['valid' => 1, 'msg' => "邮箱激活成功"];
     }
 
     /**
@@ -302,19 +218,17 @@ html;
         // 2 该邮箱是否注册
         $userInfo = $this->where('email', $data['email'])->find();
         if (!$userInfo) return ['valid' => 0, 'msg' => "该邮箱尚未注册"];
-        // 邮箱配置文件
-        $emailSendDomain = config('email.EMAIL_SEND_DOMAIN');
-        $checkstr = base64_encode($data['email']);
-        $auth_key = get_auth_key($data['email']);
-        $link = "http://{$emailSendDomain}/backend/login/checkEmailUrlValid?checkstr=$checkstr&auth_key={$auth_key}";
-
-        $str = "您好!{$userInfo['username']}， 请点击下面的链接重置您的密码：<p></p>" . $link;
-        $sendResult = send_email($data['email'], "Tinywan世界重置密码", $str);
-        if ($sendResult['error'] == 1) return ['valid' => 0, 'msg' => "邮件发送失败，请联系管理员"];
-        // 4 修改密码发送时间
+        // 3 修改密码发送时间
         $updateResult = $this->save([
             'password_time' => time()
         ], [$this->pk => $userInfo['id']]);
+        // 4 放入邮件队列
+        $taskData['task_type'] = 2; // 2：邮件
+        $taskData['status'] = 0;
+        $taskData['email_type'] = 2; // 2：修改密码
+        $taskData['email_scene'] = 2; // 2：后台
+        $taskData['user_email'] = $data['email'];
+        Db::table('resty_task_list')->insert($taskData);
         if (!$updateResult) return ['valid' => 0, 'msg' => "修改数据库密码发送时间失败"];
         return ['valid' => 1, 'msg' => $data['email'] . "系统已向您的邮箱发送了一封邮件<br/>请登录到您的邮箱及时重置您的密码"];
     }
@@ -442,6 +356,15 @@ html;
         session('frontend.id', $this->pk);
         session('frontend.username', $data["mobile"]);
         return ['valid' => 1, 'msg' => "注册成功"];
+    }
+
+    public function del($id)
+    {
+        //1 获取当前删除数据id 的pid的值
+        //2 将当前要删除的id的子集数据的pid 修改为删除数据自己的pid ,这样子就做到了往上提一级的概念
+        $res = $this->where('id', $id)->update(['deleted' => 1]);
+        if (false === $res) return ['valid' => 0, 'msg' => "删除失败"];
+        return ['valid' => 1, 'msg' => "删除成功"];
     }
 
 }

@@ -1,0 +1,345 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active">
+                    <a data-toggle="tab" href="#live-list">
+                        <i class="green icon-home bigger-110"></i>
+                        活动列表
+                    </a>
+                </li>
+
+                <li>
+                    <a data-toggle="tab" href="#live-add">
+                        <i class="green icon-home bigger-110"></i>
+                        添加活动
+                    </a>
+                </li>
+
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">&nbsp;
+                        审核状态
+                        <i class="icon-caret-down bigger-110 width-auto"></i>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-info">
+                        <li>
+                            <a data-toggle="tab" href="#dropdown1">
+                                <i class="green icon-home bigger-110"></i>
+                                等待审核
+                            </a>
+                        </li>
+
+                        <li>
+                            <a data-toggle="tab" href="#dropdown2">
+                                <i class="green icon-home bigger-110"></i>
+                                审核通过
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#dropdown2"><i class="green icon-home bigger-110"></i>
+                                审核驳回
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="live-list" class="tab-pane in active">
+                    <table class="table table-border table-bordered table-bg">
+                        <thead>
+                        <tr class="text-c">
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>时间</th>
+                            <th>推流地址</th>
+                            <th>直播地址</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name='categorys' id='vo'}
+                        <tr class="text-c">
+                            <td>{$vo["id"]}</td>
+                            <td>{$vo["name"]}</td>
+                            <td>
+                            <span >开始时间：{$vo["liveStartTime"]}</span><br>
+                            <span >结束时间：{$vo["liveEndTime"]}</span>
+                            </td>
+                            <td>
+                                <span >rtmp://live.tinywan.com/live/{$vo["id"]}</span><br>
+                            </td>
+                            <td>
+                            <span >RTMP地址：rtmp://live.tinywan.com/live/{$vo["id"]}</span><br>
+                            <span >HLS地址：https://live.tinywan.com/hls/{$vo["id"]}.m3u8</span>
+                            </td>
+                            <td>
+
+                                {if condition="$vo.recordStatus == 1 "}
+                                <a href="javascript:recordHandleModal({$vo['id']},{$vo.recordStatus});" class="btn btn-danger btn-xs" >
+                                    <i class="icon-facetime-video"></i> 停止录像
+                                </a>
+                                {else /}
+                                <a href="javascript:recordHandleModal({$vo['id']},{$vo.recordStatus});" class="btn btn-info btn-xs" >
+                                    <i class="icon-facetime-video"></i> 开始录像
+                                </a>
+                                {/if}
+                                <a href="{:url('frontend/Live/index',['id'=>$vo['id']])}" target="_blank">
+                                    <button class="btn btn-primary btn-xs">
+                                        <i class="icon-eye-open"></i> 预览
+                                    </button>
+                                </a>
+                                <a href="https://live.tinywan.com/stat" target="_blank">
+                                    <button class="btn btn-default btn-xs">
+                                        <i class="icon-dashboard"></i> 流信息查看
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div id="live-add" class="tab-pane">
+                    <form action="{:url('/backend/live/liveStore')}" method="post" class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 活动名称</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="form-field-1" placeholder="请输入活动名称" name="name" class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="liveStartTime" class="col-sm-3 control-label no-padding-right">开始时间</label>
+                            <div class="col-sm-9" style="width: 250px;">
+                                <div class="input-group date form_date col-md" data-date="" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="dtp_input1" data-link-format="yyyy-mm-dd hh:ii:ss">
+                                    <input class="form-control" name="liveStartTime" id="liveStartTime" value="" size="20" type="text" placeholder="必填">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+                                <input type="hidden" id="dtp_input1" value="2017-10-04 05:25:10"><br>
+                                <span class="field-note">格式：2014-11-12 18:18:18</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="liveEndTime" class="col-sm-3 control-label no-padding-right">结束时间</label>
+                            <div class="col-sm-9" style="width: 250px;">
+                                <div class="input-group date form_date col-md" data-date="" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd hh:ii:ss">
+                                    <input class="form-control" name="liveEndTime" id="liveEndTime" size="20" type="text" value="" placeholder="必填">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+                                <input type="hidden" id="dtp_input2" value=""><br>
+                                <span class="field-note">格式：2014-11-12 18:18:18</span>
+                            </div>
+                        </div>
+                        <div class="form-actions center">
+                            <button type="submit" class="btn btn-success">提交</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="dropdown1" class="tab-pane">
+                    <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo
+                        retro fanny pack lo-fi farm-to-table readymade.</p>
+                </div>
+
+                <div id="dropdown2" class="tab-pane">
+                    <p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out
+                        master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan
+                        DIY, art party locavore wolf cliche high life echo park Austin.</p>
+                </div>
+            </div>
+        </div>
+    </div><!-- /span -->
+
+</div><!-- /row -->
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="recordHandleModal" tabindex="-1" role="dialog" aria-labelledby="recordHandleModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title "><i class="icon-lightbulb bigger-110"></i> &nbsp;提示信息!</h4>
+            </div>
+            <div class="modal-body">
+                <h4>
+                    确定要开始录像吗？
+                </h4>
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-danger record-hander" >确定</a>
+                <a type="button" class="btn btn-success" data-dismiss="modal" >取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Success before include CommonJS
+    function successShow($msg) {
+        $("#auth-image").attr('src', '__COMMON__/images/success.svg');
+        $(".auth-msg").html($msg);
+        $("#authHanderModal").modal("show");
+    }
+
+    // Fail before include CommonJS
+    function failShow($msg) {
+        $(".modal-body").css("color", "red");
+        $("#auth-image").attr('src', '__COMMON__/images/error.svg');
+        $(".auth-msg").html($msg);
+        $("#authHanderModal").modal("show");
+    }
+
+    var $liveId;
+    var $recordStatus;
+    function recordHandleModal(id,recordStatus) {
+        $liveId = id;
+        $recordStatus = recordStatus;
+        $("#recordHandleModal").modal("show");
+    }
+
+    $(document).ready(function(){
+        $('body').delegate('.record-hander', 'click', function () {
+            $("#recordHandleModal").modal("hide");
+            var $url = "{:url('backend/live/recordHandle')}";
+            var $_data = {
+                'id': $liveId,
+                'recordStatus': $recordStatus
+            };
+            $.ajax({
+                url: $url,
+                type: 'post',
+                data: $_data,
+                dataType: "json",
+                //服务器成功响应处理函数
+                success: function ($response) {
+                    console.log($response)
+                    if ($response.code == 200) {
+                        successShow($response.msg);
+                    } else {
+                        failShow($response.msg);
+                    }
+                },
+                //服务器响应失败处理函数
+                error: function (data, status, e) {
+                    alert(e);
+                }
+            })
+        });
+    });
+</script>
+<script type="text/javascript" charset="utf-8" src="__COMMON__/bootstrap-3.3.7/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+
+    var tagdiv = document.getElementById("secondtagSel");
+    var secondtag = document.getElementById("secondtag");
+    var cateTree = [];
+    $(function(){
+        $("#secondtag").change(function(){
+            var tag = $(this).children('option:selected').val();
+
+            $.ajax({
+                type:'post',
+                url:'/tags/getThirdTag',
+                data:{tag:tag},
+                dataType:'html',
+                success:function(data){
+                    if(data !='' ){
+                        $("#thirdtagSel").css('display','block');
+                        $("#thirdtag").find('option').remove();
+                        $("#thirdtag").append(data);
+                    }
+                }
+            });
+
+            return true;
+        });
+
+    });
+
+    var firstDayOfMonth = function() {
+        // your special logic...
+        return 0;
+    };
+    var d = new Date();
+    var currMonth = d.getMonth()-1;
+    var currYear = d.getFullYear()-1;
+    var startDate = new Date(currYear,currMonth,firstDayOfMonth());
+    $('.form_date').datetimepicker({
+        language:  'zh-CN',//
+        format:"yyyy-mm-dd hh:ii:ss",//
+        weekStart: 1,//
+        todayBtn:  false,
+        autoclose: true,//
+        todayHighlight: true,
+        startView: 2,//
+        startDate: startDate,
+        forceParse: 0,
+        showMeridian: false,
+        minuteStep:5,
+        minView: 0,//month
+        pickerPosition: "bottom-left",
+    });
+
+    function checkSubmit(form) {
+        var es = form.elements;
+        var locationTime = es["liveStartTime"];
+        var stopTime = es["liveEndTime"];
+        if (locationTime.value == "") {
+            alert("请输入开始时间");
+            locationTime.focus();
+            return false;
+        }
+
+        if (!validateDateTime(locationTime.value)) {
+            alert("请输入合法的开始时间");
+            locationTime.focus();
+            return false;
+        }
+
+        if (stopTime.value == "") {
+            alert("请输入结束时间");
+            stopTime.focus();
+            return false;
+        }
+        if (!validateDateTime(stopTime.value)) {
+            alert("请输入合法的结束时间");
+            stopTime.focus();
+            return false;
+        }
+        if(!isStartEndDate(locationTime.value,stopTime.value)){
+            alert("开始日期不能大于结束日期");
+            return false;
+        }
+        return true;
+    }
+
+    function isStartEndDate(startDate,endDate){
+        //alert(startDate "===" endDate);
+        if(startDate.length>0&&endDate.length>0){
+            var startDateTemp = startDate.split(" ");
+            var endDateTemp = endDate.split(" ");
+            var arrStartDate = startDateTemp[0].split("-");
+            var arrEndDate = endDateTemp[0].split("-");
+            var arrStartTime = startDateTemp[1].split(":");
+            var arrEndTime = endDateTemp[1].split(":");
+            var allStartDate = new Date(arrStartDate[0],arrStartDate[1],arrStartDate[2],arrStartTime[0],arrStartTime[1],arrStartTime[2]);
+            var allEndDate = new Date(arrEndDate[0],arrEndDate[1],arrEndDate[2],arrEndTime[0],arrEndTime[1],arrEndTime[2]);
+            if(allStartDate.getTime()>allEndDate.getTime()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function validateDateTime(dateTime) {
+        var re = /^(((^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(10|12|0?[13578])([-\/\._])(3[01]|[12][0-9]|0?[1-9]))|(^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(11|0?[469])([-\/\._])(30|[12][0-9]|0?[1-9]))|(^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(0?2)([-\/\._])(2[0-8]|1[0-9]|0?[1-9]))|(^([2468][048]00)([-\/\._])(0?2)([-\/\._])(29))|(^([3579][26]00)([-\/\._])(0?2)([-\/\._])(29))|(^([1][89][0][48])([-\/\._])(0?2)([-\/\._])(29))|(^([2-9][0-9][0][48])([-\/\._])(0?2)([-\/\._])(29))|(^([1][89][2468][048])([-\/\._])(0?2)([-\/\._])(29))|(^([2-9][0-9][2468][048])([-\/\._])(0?2)([-\/\._])(29))|(^([1][89][13579][26])([-\/\._])(0?2)([-\/\._])(29))|(^([2-9][0-9][13579][26])([-\/\._])(0?2)([-\/\._])(29)))((\s+(0?[1-9]|1[012])(:[0-5]\d){0,2}(\s[AP]M))?$|(\s+([01]\d|2[0-3])(:[0-5]\d){0,2})?$))$/;
+        return re.test(dateTime);
+    }
+</script>

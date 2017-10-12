@@ -4,19 +4,21 @@
  * |  Blog: http://www.cnblogs.com/Tinywan
  * |-------------------------------------------------------------------
  * |  Author: Tinywan(SHaoBo Wan)
- * |  Date: 2017/1/20
- * |  Time: 16:25
+ * |  Date: 2017/1/20 16:25
  * |  Mail: Overcome.wan@Gmail.com
  * |  Created by PhpStorm.
  * '-------------------------------------------------------------------*/
 namespace app\backend\controller;
 
-class Category extends Common
+use app\common\controller\BaseBackend;
+
+class Category extends BaseBackend
 {
     protected $db;
 
     public function _initialize()
     {
+        parent::_initialize();
         $this->db = new \app\common\model\Category();  //对象存储在一个db属性中
     }
 

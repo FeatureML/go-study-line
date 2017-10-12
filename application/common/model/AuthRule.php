@@ -1,11 +1,18 @@
 <?php
-
+/** .-------------------------------------------------------------------
+ * |  Github: https://github.com/Tinywan
+ * |  Blog: http://www.cnblogs.com/Tinywan
+ * |-------------------------------------------------------------------
+ * |  Author: Tinywan(ShaoBo Wan)
+ * |  DateTime: 2017/9/10 16:43
+ * |  Mail: Overcome.wan@Gmail.com
+ * |  Created by PhpStorm
+ * '-------------------------------------------------------------------*/
 namespace app\common\model;
 
 use houdunwang\arr\Arr;
-use think\Model;
 
-class AuthRule extends Model
+class AuthRule extends BaseModel
 {
     protected $pk = "id";
     protected $table = "resty_auth_rule"; //完整的表名
@@ -45,7 +52,6 @@ class AuthRule extends Model
         $subIds[] = $id;
         // 3 找到除了自己和自己子集的所有数据,构成树结构
         $res = db('auth_rule')->whereNotIn('id', $subIds)->select();
-        halt($res);
         return Arr::tree($res, 'title', $fieldPri = 'id', $fieldPid = 'pid');
 
     }

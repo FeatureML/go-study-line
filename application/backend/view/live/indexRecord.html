@@ -1,0 +1,147 @@
+<div class="page-content">
+    <div class="btn-group">
+        <form action="{:url('/backend/live/indexRecord')}" method="post" class="form-horizontal" role="form">
+            <div class="form-group">
+                <div class="col-sm-6" style="width: 250px;">
+                    <div class="input-group date form_date col-md" data-date="" data-date-format="yyyy-mm-dd hh:ii:ss"
+                         data-link-field="dtp_input1" data-link-format="yyyy-mm-dd hh:ii:ss">
+                        <input class="form-control" name="liveStartTime" id="liveStartTime" value="" size="20"
+                               type="text" placeholder="按照时间查询视频回顾">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">搜索</button>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <ul class="ace-thumbnails">
+                {volist name="videos" id="vo"}
+                <li>
+                    <a href="{$Think.config.aliyun_oss.DOMAIN}data/{$vo.streamName}/video/{$vo.fileName}.mp4"
+                       target="_blank" title="Photo Title" data-rel="colorbox" class="cboxElement">
+                        <img alt="50x50"
+                             src="{$Think.config.aliyun_oss.DOMAIN}data/{$vo.streamName}/video/{$vo.fileName}.jpg"
+                             width="263" height="220">
+                        <div class="tags">
+                                <span class="label-holder">
+                                    <span class="label label-info">编号:{$vo['streamName']}</span>
+                                </span>
+
+                            <span class="label-holder">
+                                    <span class="label label-danger">ID:{$vo['fileName']}</span>
+                                </span>
+
+                            <span class="label-holder">
+                                    <span class="label label-success arrowed-in">开始时间:{$vo['fileTime']}</span>
+                                </span>
+
+                            <span class="label-holder">
+                                    <span class="label label-warning arrowed-in">结束时间:{$vo['createTime']}</span>
+                                </span>
+                        </div>
+                    </a>
+                </li>
+                {/volist}
+            </ul>
+        </div><!-- /.col -->
+        <hr>
+        <div>{$videos->render()}</div>
+    </div><!-- /.row -->
+</div>
+<script type="text/javascript" charset="utf-8"
+        src="__COMMON__/bootstrap-3.3.7/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+
+    var firstDayOfMonth = function () {
+        // your special logic...
+        return 0;
+    };
+    var d = new Date();
+    var currMonth = d.getMonth() - 1;
+    var currYear = d.getFullYear() - 1;
+    var startDate = new Date(currYear, currMonth, firstDayOfMonth());
+    $('.form_date').datetimepicker({
+        language: 'zh-CN',
+        format: "yyyy-mm-dd",
+        weekStart: true,
+        todayBtn: true,
+        autoclose: true,
+        todayHighlight: true,
+        startView: 2,
+        startDate: startDate,
+        forceParse: 0,
+        showMeridian: false,
+        minuteStep: 1,
+        minView: "month",
+        pickerPosition: "bottom-left"
+    });
+
+
+    //删除
+    var promptId = null;
+    function promptDelete(liveId) {
+        promptId = liveId;
+        $("#promptModal").modal("show");
+    }
+
+    function deleteChannel() {
+        $("#promptModal").modal("hide");
+        if (promptId != null) {
+            $.post("/lives/" + promptId + "/delete", function (data) {
+                if (data.errcode == 500) {
+                    alert(data.errmsg)
+                } else {
+                    $("#liveId_" + promptId).remove();
+                }
+            }).fail(function (e) {
+                alert("删除失败: " + e);
+            });
+        }
+    }
+
+    //放入婚庆首页轮播区
+    var spreadId = null;
+    function promptSpread(liveId, spread) {
+        promptId = liveId;
+        spreadId = spread;
+        $("#spread_modalLabel").text(liveId);
+        $("#spread").val(spreadId);
+        $("#spreadModal").modal("show");
+    }
+
+    function SpreadChannel() {
+        var i = $("#spread").val();
+        if (!isNaN(i) && i != "") {
+            $("#spreadModal").modal("hide");
+            $("#spread_error").text("");
+            if (promptId != null) {
+                $.post("/lives/" + promptId + "/spread", {spread: i}, function (data) {
+                    if (data.errcode == 500) {
+                        alert(data.errmsg)
+                    } else {
+                        window.location.reload();
+                    }
+                }).fail(function (e) {
+                    alert("错误: " + e);
+                });
+            }
+        } else {
+            $("#spread_error").text("必须为数字！");
+        }
+    }
+
+    $("#search_submit").click(function () {
+        if ($("#search_value").val() == "") {
+            location.href = "/lives";
+            return false;
+        }
+    })
+</script>
+

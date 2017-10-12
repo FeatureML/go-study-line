@@ -21,23 +21,17 @@ class Index extends Controller
     {
         //$scope = "snsapi_base";
         $scope = "snsapi_userinfo";
-        $appid = '5e70ee2d904f655b0c31';
+        $appid = 'wx94c43716d8a91f3f';
         /*基本授权 方法跳转地址*/
-        $redirect_uri = urlencode('http://wanwecaht.amai8.com/wechat/Index/getUserInfo');
+        $redirect_uri = urlencode('http://www.tinywan.com/wechat/Index/getUserInfo');
         $url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" . $appid . "&redirect_uri=" . $redirect_uri . "&response_type=code&scope=${scope}&state=1234#wechat_redirect";
         header('location:' . $url);
     }
-
-    public function test(){
-        return $this->fetch('testdemo');
-    }
-
     /**
          * 拉取用户信息
      */
     public function getUserInfo()
     {
-        header("Content-type: text/html; charset=utf-8");
         $appid = 'wx94c43716d8a91f3f';
         $appsecret = 'd4624c36b6795d1d99dcf0547af5443d';
         /*回调的时候自带的这个参数*/
@@ -51,14 +45,13 @@ class Index extends Controller
         //第二步:取得openid
         $oauth2Url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=$appid&secret=$appsecret&code=$code&grant_type=authorization_code";
         $oauth2 = getJson($oauth2Url);
-
         //第三步:根据全局access_token和openid查询用户信息
         $access_token = $token["access_token"];
         $openid = $oauth2['openid'];
         $get_user_info_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=$access_token&openid=$openid&lang=zh_CN";
         $userinfo = getJson($get_user_info_url);
         //打印用户信息
-        print_r($userinfo);
+        halt($userinfo);
     }
 
     /**

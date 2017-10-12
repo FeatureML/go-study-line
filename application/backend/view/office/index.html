@@ -1,0 +1,180 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab4">
+                <li class="active">
+                    <a data-toggle="tab" href="#mysql-to-excel">
+                        <i class="blue  icon-cogs bigger-110"></i>
+                        数据库导出到Excel
+                    </a>
+                </li>
+
+                <li>
+                    <a data-toggle="tab" href="#excel-to-mysql">
+                        <i class="blue   icon-laptop bigger-110"></i>
+                        Excel导入到数据库
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- 基本配置 -->
+                <div id="mysql-to-excel" class="tab-pane in active">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <form action="{:url('backend/office/mysqlToExcel')}" method="post" class="form-horizontal" role="form">
+                        <div class="table-responsive">
+                            <table class="table table-border table-bordered table-bg">
+                                <thead>
+                                <tr class="text-c">
+                                    <th class="center">
+                                        <label>
+                                            <input type="checkbox" class="ace" id="SelectAll" onclick="swapCheck()">
+                                            <span class="lbl"></span>
+                                        </label>
+                                    </th>
+                                    <th>活动ID</th>
+                                    <th>用户昵称</th>
+                                    <th>邀请码</th>
+                                    <th>邀请码创建时间</th>
+                                    <th>邀请码使用时间</th>
+                                    <th>到期时间</th>
+                                    <th>联系电话</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {volist name='lists' id='vo'}
+                                <tr class="text-c" id="data-{$vo.id}">
+                                    <td class="center">
+                                        <label>
+                                            <input type="checkbox" class="ace" id="subCheck" value="{$vo.id}" name="subcheck[]">
+                                            <span class="lbl"></span>
+                                        </label>
+                                    </td>
+                                    <td>{$vo.liveId}</td>
+                                    <td>{$vo.userId}</td>
+                                    <td>{$vo.code}</td>
+                                    <td>{$vo.createTime}</td>
+                                    <td>{$vo.usedTime}</td>
+                                    <td>{$vo.createTime}</td>
+                                    <td>{$vo.tel}</td>
+                                </tr>
+                                {/volist}
+                                </tbody>
+                            </table>
+                            <div>{$lists->render()}</div>
+                        </div>
+                        <input type="submit" value='CSV格式导出' class='btn btn-info btn-block startSendSms'/>
+                        <input type="submit" value='Excel格式导出' class='btn btn-grey btn-block'/>
+                    </form>
+                    <!-- PAGE CONTENT ENDS -->
+                </div>
+
+                <!-- 邮箱配置 -->
+                <div id="excel-to-mysql" class="tab-pane">
+                    <!-- PAGE CONTENT ENDS -->
+                    <form action="{:url('backend/system/sessionconfig')}" method="post" class="form-horizontal"
+                          role="form">
+                        <div class="table-responsive">
+                            稍等啊！！！
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- /span -->
+</div><!-- /row -->
+<script type="text/javascript">
+    //checkbox 全选/取消全选
+    var $isCheckAll = false;
+    function swapCheck() {
+        if ($isCheckAll) {
+            $("input[type='checkbox']").each(function () {
+                this.checked = false;
+            })
+            $isCheckAll = false;
+        } else {
+            $("input[type='checkbox']").each(function () {
+                this.checked = true;
+            })
+            $isCheckAll = true;
+        }
+    }
+    $(function () {
+        $("input:checkbox").click(function () {
+            if (this.checked == true) {
+                $("#SelectAll").attr('checked', true);
+            }
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $(".synchronize_contacts").bind('click', function () {
+            console.log('synchronize_contacts');
+            var $msg = confirm('确认立即同步吗？');
+            var $url = "{:url('backend/office/mysqlToExcel')}";
+            if (!$msg) return false;
+            $.ajax({
+                url: $url,
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    'uid': $("#uid").val(),
+                    'group_id': $("#select_group_id").val()
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response.code == 200) {
+                        alert(response.msg);
+                        window.location.reload();
+                    } else {
+                        alert(response.msg);
+                    }
+                },
+                error: function () {
+                    alert('删除失败');
+                }
+            });
+        });
+
+        /**
+         * 开始发送短信
+         */
+        $(".startSendSms").bind('click', function () {
+            //jquery获取复选框值
+            var chk_value = [];
+            $('input[name="subcheck"]:checked').each(function () {
+                chk_value.push($(this).val());
+            });
+            if (chk_value.length == 0) {
+                console.log('你还没有选择任何内容！');
+                alert('你还没有选择任何内容！')
+                return false;
+            }
+            var $url = "{:url('backend/office/mysqlToExcel')}";
+            console.log(chk_value.join(','));
+            $.ajax({
+                url: $url,
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    'actions': chk_value.join(',')
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response.code == 200) {
+                        alert(response.msg);
+                        window.location.reload();
+                    } else {
+                        alert(response.msg);
+                    }
+                },
+                error: function () {
+                    console.log('发送失败');
+                }
+            });
+        });
+    });
+</script>

@@ -2,14 +2,31 @@
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8"/>
-    <title>{$Think.config.app_title}</title>
+    <title>{$Think.config.webinfo.WEBNAME}</title>
     <meta name="description" content="overview &amp; stats"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="__COMMON__/bootstrap-3.3.5/css/bootstrap.css"/>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="icon" href="/favicon.ico" mce_href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" mce_href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="__COMMON__/bootstrap-3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="__COMMON__/font/css/font-awesome.min.css"/>
     <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="__COMMON__/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="__COMMON__/plugins/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__COMMON__/plugins/ueditor/ueditor.all.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__COMMON__/plugins/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="__COMMON__/plugins/ueditor/third-party/SyntaxHighlighter/shCore.js"></script>
+    <link rel="stylesheet" href="__COMMON__/plugins/ueditor/third-party/SyntaxHighlighter/shCoreDefault.css">
+    <link rel="stylesheet" href="__CSS__/site.css">
+
+    <link href="__COMMON__/videojs/videojs/video-js.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="__COMMON__/videojs/Skins/YouTouBe.css">
+
+    <script type="text/javascript">
+        SyntaxHighlighter.all();
+    </script>
     <style type="text/css">
         body {
             padding-top: 60px;
@@ -111,10 +128,6 @@
             width: 100%;
         }
 
-        .border-bottom {
-            border-bottom: 1px solid #ccc;
-        }
-
         .btn-group, .btn-group-vertical {
             position: relative;
             display: inline-block;
@@ -133,6 +146,37 @@
             height: 40px;
             text-align: center
         }
+
+        .post-label {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            display: block;
+            line-height: 1.42857;
+            padding: 4px;
+            transition: border 0.2s ease-in-out 0s;
+        }
+
+        .media:first-child {
+            margin-top: 15px;
+        }
+
+        .media-list .media {
+            border-bottom: #eee solid 1px;
+            padding-bottom: 15px;
+        }
+
+        .last-comments {
+            padding-left: 40px;
+        }
+        .last-comments-left{
+            float: left;
+            background-color: #00a2d4;
+        }
+        .last-comments-boby{
+            float: right;
+            border: 1px solid #c0a16b;
+        }
+
     </style>
 </head>
 <body>
@@ -146,33 +190,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">
-                <img src="__COMMON__/images/logo.png" alt="Yii Framework 中文社区" height="35">
-            </a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="navbar-nav navbar-left nav">
-                <li class="active"><a href="/">首页</a></li>
-                <li><a href="#summary-container">下载</a></li>
-                <li><a href="#summary-container">文档</a></li>
-                <li><a href="#summary-container">教程</a></li>
-                <li><a href="#summary-container">扩展</a></li>
-                <li><a href="#summary-container">源码</a></li>
-                <li><a href="#summary-container">回答</a></li>
-                <li><a href="#summary-container">话题</a></li>
-                <li><a href="#summary-container">视频</a></li>
-                <li><a href="#summary-container">案例</a></li>
-                <li><a href="#summary-container">排行</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">特点 <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#feature-tab" data-tab="tab-chrome">Chrome</a></li>
-                        <li><a href="#feature-tab" data-tab="tab-firefox">Firefox</a></li>
-                        <li><a href="#feature-tab" data-tab="tab-safari">Safari</a></li>
-                        <li><a href="#feature-tab" data-tab="tab-opera">Opera</a></li>
-                        <li><a href="#feature-tab" data-tab="tab-ie">IE</a></li>
-                    </ul>
-                </li>
+                {volist name='navbar' id='vo'}
+                <li><a href="{$vo['url']}">{$vo['title']}</a></li>
+                {/volist}
                 <li>
                     <form class="navbar-form navbar-left" role="search">
                         <div class="form-group">
@@ -182,9 +205,20 @@
                     </form>
                 </li>
             </ul>
-            <ul class="navbar-nav navbar-right nav">
-                {if condition="$Think.session.frontend.username"}
-                <li><a href="{:url('frontend/member/signin121')}">{$Think.session.frontend.username}</a></li>
+            <ul id="w4" class="navbar-nav navbar-right nav">
+                <li><a href="/user/notice"><i class="fa fa-bell"></i> </a></li>
+                {if condition="$Think.session.open_user_username"}
+                <li class="dropdown">
+                    <a class="avatar dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+                        <img src="{$userInfo.avatar}" alt="{$Think.session.open_user_username}"> <b class="caret"></b>
+                    </a>
+                    <ul id="w5" class="dropdown-menu">
+                        <li><a href="/user" tabindex="-1"><i class="fa fa-user fa-fw"></i> 个人主页</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/frontend/open_auth/logout" data-method="post" tabindex="-1"><i class="fa fa-sign-out fa-fw"></i> 退出登录</a>
+                        </li>
+                    </ul>
+                </li>
                 {else /}
                 <li><a href="{:url('frontend/member/signup')}">注册</a></li>
                 <li><a href="{:url('frontend/member/signin')}">登录</a></li>

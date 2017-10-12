@@ -4,14 +4,14 @@
             <ul class="nav nav-tabs" id="myTab">
                 <li class="active">
                     <a data-toggle="tab" href="#category-list">
-                        <i class="green icon-home bigger-110"></i>
+                        <i class="blue icon-home bigger-110"></i>
                         文章列表
                     </a>
                 </li>
 
                 <li>
                     <a data-toggle="tab" href="#category-add">
-                        <i class="green icon-home bigger-110"></i>
+                        <i class="blue icon-edit bigger-110"></i>
                         文章添加
                     </a>
                 </li>
@@ -57,7 +57,7 @@
                 </div>
 
                 <div id="category-add" class="tab-pane left">
-                    <form action="{:url('/backend/article/store')}" method="post" class="form-horizontal" role="form">
+                    <form action="{:url('/backend/article/store')}" method="post" enctype="multipart/form-data" class="form-horizontal">
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 文章标题</label>
 
@@ -67,7 +67,31 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="form-field-2"> 所属栏目</label>
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-2"> 关键字</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="keyword" placeholder="关键字" name="keyword" class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-3"> 描述</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="desc" placeholder="描述" name="desc" class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-4"> 缩略图</label>
+
+                            <div class="col-sm-9">
+                                <input type="file" id="thumb" name="thumb" class="col-xs-10 col-sm-5"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-5"> 所属栏目</label>
 
                             <div class="col-sm-9">
                                 <select name="cate_id" id="cate_id">
@@ -79,7 +103,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="form-field-3"> 标签</label>
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-6"> 标签</label>
 
                             <div class="col-sm-9">
                                 <label class="middle">
@@ -91,7 +115,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="form-field-4"> 文章内容 </label>
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-7"> 文章内容 </label>
 
                             <div class="col-sm-9">
                                 <textarea name="content" id="editor" style="width:1024px;height:500px;"></textarea>
@@ -108,6 +132,10 @@
     </div><!-- /span -->
 
 </div><!-- /row -->
+
+<script type="text/javascript">
+    SyntaxHighlighter.all();
+</script>
 <script type="text/javascript" charset="utf-8">
 window.UEDITOR_HOME_URL = "__COMMON__/plugins/ueditor/";
 var ue = UE.getEditor('editor',{

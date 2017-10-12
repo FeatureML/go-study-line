@@ -16,16 +16,12 @@
             </div>
 
             <div class="page-content">
-                <p>
-                    </p>{$article.content}
-                <div class="post-donate">
-                    <span>如果文章对您有所帮助，希望继续支持我们，您的支持是我们最大的动力</span>
-                    <a href="/donate/index.html" class="btn btn-success">￥打赏</a>
-                </div>
+                <p></p>{$article.content}
                 <div class="page-tag">
                     <b>标签：</b>
                     {volist name="tags" id="vo"}
-                    <span><a href="{:url('frontend/index/searchByTagId',['id'=>$vo['tag_id']])}">{$vo['name']}</a></span>
+                    <span><a
+                            href="{:url('frontend/index/searchByTagId',['id'=>$vo['tag_id']])}">{$vo['name']}</a></span>
                     {/volist}
                     <div class="page-declare">
                         <b>声明：</b><span>文章内容由作者原创或整理，未经允许，不得转载！</span>
@@ -58,21 +54,112 @@
 
                 <div class="page-comment">
                     <div id="comments" style="margin-top: 10px;">
-                        <div class="page-header">
-                            <h2>共 0 条评论</h2>
+                        <div class="page-header comment-num">
+                            <h2>共 {$commentCounts} 条评论</h2>
                         </div>
-                        <ul id="reply" class="media-list J_mediaList">
+                        <ul id="reply" class="media-list J_mediaList comment-ul">
+                            {volist name="comments" id="vo"}
+                            <li class="media" data-key="13091">
+                                <div class="media-left">
+                                    <a href="/member/index/{$vo.user_id}" rel="author" data-original-title="" title="">
+                                        <img class="media-object" src="{$vo.avatar}" alt="{$vo.account}"
+                                             data-bd-imgshare-binded="1">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <div class="media-heading">
+                                        <a href="/member/index/{$vo.user_id}" rel="author" data-original-title=""
+                                           title="">{$vo.account}</a>
+                                        评论于 {$vo.create_time|date="Y-m-d H:i:s",###}
+                                    </div>
 
+                                    <div class="media-content" id="replay-content" comment_id="{$vo.comment_id}">
+                                        <p>{$vo['comment_content']}</p>
+                                        <!--<div class="hint">共 <em>{$vo.children|count}</em> 条回复</div>-->
+                                        <!----------------二级--------------->
+                                        {volist name="vo.children" id="sub"}
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <a href="/user/32840" rel="author">
+                                                    <img class="media-object" src="{$sub.avatar}"
+                                                         alt="{$sub.account}">
+                                                </a>
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="media-heading">
+                                                    <a href="/user/32840" rel="author">
+                                                        {$sub.account}
+                                                    </a>
+                                                    回答于 {$sub.create_time|date="Y-m-d H:i:s",###} <span
+                                                        class="pull-right">
+                                                    <a class="comment-reply" post_id="{$sub['post_id']}"
+                                                       comment_id="{$sub['comment_id']}"
+                                                       replay_user_name="{$sub['account']}"
+                                                       sub_parent_id="{$sub['parent_id']}" href="javascript:void(0);">
+                                                        <i class="fa fa-reply"></i> @回复
+                                                    </a>
+                                                    <!--<span class="dot">•</span>-->
+                                                    <!--<a href="/answer/update?id=13124">-->
+                                                    <!--<i class="fa fa-pencil"></i>-->
+                                                    <!--修改-->
+                                                    <!--</a>                                                                   -->
+                                                </span>
+                                                </div>
+                                                <div class="media-content"><p> {$sub['comment_content']}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/volist}
+                                    </div>
+
+                                    <div class="media-action" >
+                                        <a class="comment-reply" href="javascript:void(0);" replyswitch="off"
+                                           post_id="{$vo.post_id}" comment_id="{$vo.comment_id}"
+                                           replay_user_name="{$vo.account}">
+                                            <i class="fa fa-reply"></i> 回复评论
+                                        </a>
+                                        <span class="pull-right">
+                                            <a class="vote up" href="javascript:void(0);" title="" data-type="answer"
+                                               data-id="13110"
+                                               data-toggle="tooltip" data-original-title="顶"><i
+                                                    class="fa fa-thumbs-o-up"></i> 0
+                                            </a>
+                                            <a class="vote down" href="javascript:void(0);" title="" data-type="answer"
+                                               data-id="13110"
+                                               data-toggle="tooltip" data-original-title="踩"><i
+                                                    class="fa fa-thumbs-o-down"></i> 0
+                                            </a>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </li>
+                            {/volist}
                         </ul>
                     </div>
-                    <input type="hidden" value="/comment/reply.html" class="j_reply_url"></div>
+                </div>
 
                 <div class="page-comment">
                     <div class="panel">
+
+                        {if condition="$Think.session.open_user_username"}
                         <div class="panel-content">
-                            <div class="well danger">您需要登录后才可以评论。<a href="/site/login.html">登录</a> | <a
-                                    href="/site/signup.html">立即注册</a></div>
+                            <input type="hidden" id="commentform-post_id" class="form-control" name="post_id"
+                                   value="{$article.id}">
+                            <input type="hidden" id="commentform-user_id" class="form-control" name="user_id"
+                                   value="{$userInfo.id}">
+                            <textarea name="comment_content" id="comment_content"
+                                      style="width:600px;height:200px;"></textarea>
+                            <div class="form-actions center">
+                                <P></P>
+                                <a class="comment-submit btn btn-sm btn-primary" replyswitch="off" parent_id="0"
+                                   style="" href="javascript:void(0);"><span style=''>发表评论</span></a>
+                            </div>
                         </div>
+                        {else /}
+                        <div class="well danger">您需要登录后才可以评论哦! <a href="{:url('frontend/member/signin')}">登录</a> | <a
+                                href="{:url('frontend/member/signup')}">立即注册</a></div>
+                        {/if}
                     </div>
                 </div>
             </div>
@@ -85,60 +172,202 @@
                     <span class="pull-right"><a href="/post/index.html" class="font-12">更多»</a></span>
                 </div>
                 <div class="new last-post J_lastTime">
-                    <ul>
-                        <li class="hov">
-                            <a href="/post/detail/526.html" target="_blank">
-                                <div class="time">
-                                    <span class="r">03</span>/<span class="y">07月</span>
-                                </div>
-                                <div class="title">php model里时间处理</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/post/detail/514.html" target="_blank">
-                                <div class="time">
-                                    <span class="r">28</span>/<span class="y">04月</span>
-                                </div>
-                                <div class="title">unix命令大全--文件编辑器 vi</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/post/detail/513.html" target="_blank">
-                                <div class="time">
-                                    <span class="r">28</span>/<span class="y">04月</span>
-                                </div>
-                                <div class="title">unix命令大全--电子邮件(E-mail)的使用简介</div>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="/post/detail/512.html" target="_blank">
-                                <div class="time">
-                                    <span class="r">28</span>/<span class="y">04月</span>
-                                </div>
-                                <div class="title">unix命令大全--系统中的使用者</div>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="/post/detail/511.html" target="_blank">
-                                <div class="time">
-                                    <span class="r">28</span>/<span class="y">04月</span>
-                                </div>
-                                <div class="title">unix命令大全--I/O control</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/post/detail/510.html" target="_blank">
-                                <div class="time">
-                                    <span class="r">28</span>/<span class="y">04月</span>
-                                </div>
-                                <div class="title">unix命令大全--history</div>
-                            </a>
-                        </li>
-
-                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+    SyntaxHighlighter.all();
+</script>
+<script type="text/javascript" charset="utf-8">
+    window.UEDITOR_HOME_URL = "__COMMON__/plugins/ueditor/";
+    var ue = UE.getEditor('comment_content', {
+        initialFrameWidth: 800,   //初始化宽度
+        initialFrameHeight: 200,   //初始化高度
+        serverUrl: "{:url('/frontend/index/saveinfo')}",
+        // 自定义工具栏目
+        toolbars: [[
+            'fullscreen', 'source', '|', 'undo', 'redo', '|',
+            'bold', 'italic', 'underline', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', '|',
+            'fontsize', '|',
+            'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|',
+            'link', 'unlink', '|',
+            'emotion', 'insertcode',
+        ]]
+    });
+    var $ueInstance = UE.getEditor('comment_content');
+    var $user_id = "{$userInfo.id}";
+    $(function () {
+
+        // 共同的Ajax异步提交
+        function commonRequest(opt) {
+            var url = opt.url;
+            var data = opt.data;
+            var self = opt.self;
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: "json",
+                success: function (response) {
+                    console.log(response.list.comment_id)
+                    console.log(response.list.parent_id)
+                    if (response.code == 200) {
+                        // 1、显示新增评论
+                        var $newli = "";
+                        // 2、判断是否是一级评论;
+                        if (response.list.parent_id == 0) {
+                            // 3、更新评论总数
+                            $(".comment-num").children("h2").html("共 " + response.list.num + " 条评论");
+                            // 4、发表的是一级评论时，添加到一级ul列表中 点击提交评论内容
+                            $newli = "<li class='media' comment_id='" + response.list.comment_id + "'>" +
+                                "<div class='media-left'><a href='/member/index/'" + response.list.user_id + "><img class='media-object' src=" + response.list.avatar + "></a></div>" +
+                                "<div class='media-body'>" +
+                                "<div class='media-heading'><a href='/member/index/23123'>" + response.list.account + "</a>评论于 " + response.list.create_time + "</div> " +
+                                "<div class='media-content'>" +
+                                "<p>" + response.list.comment_content + "</p>" +
+                                "</div>" +
+                                "<div class='media-action'><a class='comment-reply' replyswitch='off' post_id='" + response.list.post_id + "' comment_id='" + response.list.comment_id + "' replay_user_name = '" + response.list.account + "'  href='javascript:void(0);'>" +
+                                "<i class='fa fa-reply'></i> 回复1</a> <span class='pull-right'> <a class='vote up' href='javascript:void(0);'  " +
+                                "data-type='answer' data-id='13110'data-toggle='tooltip' data-original-title='顶'><i class='fa fa-thumbs-o-up'></i> 0</a> " +
+                                "<a class='vote down' href='javascript:void(0);' data-type='answer' data-id='13110' data-toggle='tooltip' data-original-title='踩'> " +
+                                "<i class='fa fa-thumbs-o-down'></i> 0 </a> </span> " +
+                                "</div>" +
+                                "</li>";
+                            $(".comment-ul").prepend($newli);
+                        }
+                        else {
+                            //二级评论的回复按钮要添加回复关闭锁属性
+                            $newli =
+                                "<div class='media' > " +
+                                "<div class='media-left'> <a href='/user/32840'> <img class='media-object' src=" + response.list.avatar + " alt=" + response.list.account + "> </a> </div> " +
+                                "<div class='media-body'> " +
+                                "<div class='media-heading'><a href='/member/index/23123' rel='author'>" + response.list.account + "</a>回答于 " + response.list.create_time + "" +
+                                "<span class='pull-right'> <a class='comment-reply' post_id='" + response.list.post_id + "' comment_id='" + response.list.comment_id + "' replay_user_name = '" + response.list.account + "' sub_parent_id = '" + response.list.parent_id + "' href='javascript:void(0);'>" + " <i class='fa fa-reply'></i>回复2 </a> " +
+                                "</div>" +
+                                "<div class='media-content'><p> " + response.list.comment_content + "</p> </div> " +
+                                "</div> " +
+                                "</div>";
+                            self.parents('.media').children('.media-body').children('.media-content').children('p:last').after($newli);
+                            $('#replyBox').remove();
+                        }
+                    } else {
+                        alert(response.msg);
+                    }
+                },
+                // 错误信息
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                    console.log(XMLHttpRequest.readyState);
+                    console.log(textStatus);
+                }
+            });
+        }
+
+        // 判断当前用户是否登录
+        function islogin() {
+            if ($user_id.length == 0) {
+                alert("请登录后发表评论!");
+                return false;
+            }
+        }
+
+        // 评论提交
+        $('body').delegate('.comment-submit', 'click', function () {
+            islogin();
+            //参数；
+            var opt = {};
+            // 2、判断是否有评论内容
+            var $hasContents = $ueInstance.hasContents();
+            if (false === $hasContents) {
+                alert("评论内容不能为空!");
+                return false;
+            }
+            // 4、获得内容
+            var content = $ueInstance.getContent();
+            // 5、获取完内容后清空输入框
+            $ueInstance.execCommand('cleardoc');
+            // 3、通过 parent_id 判断是评论还是回复，评论是使用的ueditor 而回复则是普通文本域
+            $parent_id = $(this).attr("parent_id");
+            var $url = "{:url('/frontend/index/commentStore')}";
+            var $data = {
+                "post_id": $("#commentform-post_id").val(),
+                "parent_id": $parent_id,
+                "user_id": $("#commentform-user_id").val(),
+                "comment_content": content,
+            };
+            opt['self'] = $(this);
+            opt['data'] = $data;
+            opt['url'] = $url;
+            commonRequest(opt);
+        });
+
+        // 回复提交
+        $("body").delegate(".replay-submit", "click", function () {
+            islogin();
+            // 1、判断是否有评论内容
+            var opt = {};
+            var $content = $("#reply-content").val();
+            if ("" == $content) {
+                alert("回复内容不能为空!");
+            } else {
+                var $_url = "{:url('/frontend/index/commentStore')}";
+                var $_postData = {
+                    "post_id": $("#replay_post_id").val(),
+                    "parent_id": $("#replay_parent_id").val(),
+                    "user_id": $("#replay_user_id").val(),
+                    "comment_content": $content
+                };
+                opt['self'] = $(this);
+                opt['data'] = $_postData;
+                opt['url'] = $_url;
+                commonRequest(opt);
+            }
+        });
+
+        // 回复显示
+        $("body").delegate(".comment-reply", "click", function () {
+            // 判断当前用户是否登录
+            islogin();
+            // 非 @ 回复的$parent_id
+            var $parent_id = $(this).attr("comment_id");//要回复的评论id
+            // @ 评论回复获取$parent_id
+            var $sub_parent_id = $(this).attr("sub_parent_id");//要回复的评论id
+            var $user_id = "{$userInfo.id}";
+            var $replay_user_name = $(this).attr("replay_user_name");//要回复的评论用户name @"+$replay_user_name+";
+
+            var $post_id = $(this).attr("post_id");//要回复的评论id
+            var $replayHtml = "";
+            console.log("replyswitch ===== " + $(this).attr("replyswitch"))
+            $('#replyBox').remove();
+            if ('off' == $(this).attr("replyswitch")) {  //二级评论回复后三级评论不再提供回复功能,将关闭属性附加到"提交回复"按钮"
+                $replayHtml = "<div id='replyBox'>" +
+                    "<input type='hidden' id='replay_post_id' name='post_id' value=" + $post_id + ">" +
+                    "<input type='hidden' id='replay_user_id' name='user_id' value='" + $user_id + "'>" +
+                    "<input type='hidden' id='replay_parent_id' name='parent_id' value=" + $parent_id + ">" +
+                    "<div class='form-group field-answer-reply-content required'>" +
+                    "<textarea id='reply-content' class='form-control' aria-required='true'></textarea></div> " +
+                    "<div class='form-group'>" +
+                    "<a class='replay-submit' href='javascript:void(0);' replyswitch='off'><span style=''><i class='fa fa-reply'></i> 提交评论</span></a>" +
+                    "</div>" +
+                    "</div>";
+            } else {
+                $replayHtml = "<div id='replyBox'>" +
+                    "<input type='hidden' id='replay_post_id' name='post_id' value=" + $post_id + ">" +
+                    "<input type='hidden' id='replay_user_id' name='user_id' value=" + $user_id + ">" +
+                    "<input type='hidden' id='replay_parent_id' name='parent_id' value=" + $sub_parent_id + ">" +
+                    "<div class='form-group field-answer-reply-content required'>" +
+                    "<textarea id='reply-content' class='form-control' aria-required='true'>@" + $replay_user_name + "</textarea></div> " +
+                    "<div class='form-group'>" +
+                    "<a class='replay-submit btn btn-sm' href='javascript:void(0);'><span style=''>回复2222</span></a>" +
+                    "</div>" +
+                    "</div>";
+            }
+            $(this).parents('.media').find('.media-action').append($replayHtml);
+        });
+    });
+</script>

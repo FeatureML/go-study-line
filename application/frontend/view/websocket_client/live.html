@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Web 81</h1>
+</body>
+</html>
+
+    server {
+        listen 80;
+        server_name live.tinywan.com;
+        location / {
+            proxy_pass http://localhost:81;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+
+
+    # 配置HTTP请求重定向
+    server {
+        listen       80;
+        server_name  localhost;
+        rewrite ^ https://$http_host$request_uri? permanent;    # force redirect http to https
+    }
+
+    # www.tinywan.com => 8010
+    server {
+        listen       80;
+        server_name  www.tinywan.com;
+        location / {
+            proxy_pass http://127.0.0.1:8011/;
+        }
+    }
+
+    # live.tinywan.com => 8011
+    server{
+        listen       80;
+        server_name  live.tinywan.com;
+        location / {
+            proxy_pass http://127.0.0.1:8011/;
+        }
+    }
+
+    # vod.tinywan.com => 8012
+    server{
+        listen       80;
+        server_name  live.tinywan.com;
+        location / {
+            proxy_pass http://127.0.0.1:8012/;
+        }
+    }
+
+    # www.tinywan.com
+    server {
+        listen       8010;
+        listen       443 ssl;
+        server_name  127.0.0.1;
+
+        ssl_certificate      /etc/letsencrypt/live/www.tinywan.com/fullchain.pem;
+        ssl_certificate_key  /etc/letsencrypt/live/www.tinywan.com//privkey.pem;
+        server_tokens off;
+
+        set $root_path /home/www/web/go-study-line/public;
+        root $root_path;
+
+        location / {
+            #access_by_lua_file /usr/local/openresty/nginx/conf/lua_script/resty-limit-req.lua;
+            if (!-e $request_filename) {
+                rewrite  ^(.*)$  /index.php?s=/$1  last;
+                break;
+            }
+        }
+
+        location = /favicon.ico {
+            log_not_found off;
+        }
+
+        location ~ \.php$ {
+            #access_by_lua_file /usr/local/openresty/nginx/conf/lua_script/resty-limit-req.lua;
+            fastcgi_pass   unix:/var/run/php7.1.8-fpm.sock;
+            fastcgi_index  index.php;
+            fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+            include        fastcgi_params;
+            fastcgi_buffer_size 128k;
+            fastcgi_buffers 4 256k;
+            fastcgi_busy_buffers_size 256k;
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+            fastcgi_read_timeout 300;
+        }
+    }
+
+    # live.tinywan.com
+    server {
+        listen       8081;
+        server_name  live.tinywan.com;
+        set $root_path /home/www/web/web81;
+        location / {
+            root $root_path;
+        }
+    }
+
+    # vod.tinywan.com
+    server {
+        listen       8082;
+        server_name  live.tinywan.com;
+        set $root_path /home/www/web/web82;
+        location / {
+            root $root_path;
+        }
+    }
+
+

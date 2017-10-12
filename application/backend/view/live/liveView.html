@@ -1,0 +1,93 @@
+<div class="row">
+    <div class="col-xs-12 col-sm-12 pricing-box">
+        <div class="widget-box">
+            <div class="widget-header header-color-dark">
+                <h5 class="bigger lighter">{$live.name}</h5>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <video id="live-stream" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay preload="auto" poster="__COMMON__/videojs/image/video-background.jpg" data-setup='{"example_option":true}'>
+                        <source src="https://live.tinywan.com/hls/{$live.id}.m3u8" type="application/x-mpegURL">
+                    </video>
+                </div>
+
+                <div>
+                    <a href="#" class="btn btn-block btn-inverse">
+                        <i class="icon-circle-blank bigger-110"></i>
+                        <span>开始时间：{$live.liveStartTime}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="__COMMON__/videojs/videojs/video.js"></script>
+<script src="__COMMON__/videojs/videojs/videojs-contrib-hls.min.js"></script>
+<script>
+    var options = {
+        width: 100%,
+        height: 100%
+    }
+    var player = videojs('live-stream', options);
+    player.play();
+
+    player.addClass('vjs-matrix');
+
+    player.on(['loadstart', 'play', 'playing', 'firstplay', 'pause', 'ended', 'adplay', 'adplaying', 'adfirstplay', 'adpause', 'adended', 'contentplay', 'contentplaying', 'contentfirstplay', 'contentpause', 'contentended', 'contentupdate'], function (e) {
+//        console.warn('VIDEOJS player event: ', e.type);
+//        if(e.type == "play"){
+//            console.log('开始播放');
+//        }else if(e.type == "playing"){
+//            console.log('正在播放...');
+//        }else if(e.type == "pause"){
+//            console.log('暂停视频播放');
+//        }else if(e.type == "firstplay"){
+//            console.log('firstplay播放');
+//        }else{
+//            console.log('1111111111111');
+//        }
+    });
+    player.one('canplay', function() {
+        console.log('player11111111111111');
+    });
+    console.log("暂停播放测哦错"+player.pause())
+    console.log("暂停播放测哦错"+player.currentTime())
+    /**
+     * 获取状态
+     * state值：1.playing播放中 2.paused停止 3.idle空闲 4. completed结束
+     */
+    $('.player-status').click(function () {
+        var state = player.getState();
+        console.log(state);
+        var msg;
+        switch (state){
+            case 'buffering':
+                msg = '加载中...';
+                break;
+            case 'playing':
+                msg = '播放中...';
+                break;
+            case 'paused':
+                msg = '暂停';
+                break;
+            case 'idle':
+                msg = '停止';
+                break;
+            case 'completed':
+                msg = '结束';
+                break;
+        }
+        alert(msg);
+    });
+    //停止
+    $('.player-stop').click(function () {
+        player.pause();
+    });
+    //播放
+    $('.player-play').click(function () {
+        console.log('11111111'+ player.currentTime());
+    });
+
+</script>

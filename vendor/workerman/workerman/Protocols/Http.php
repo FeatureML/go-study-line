@@ -198,7 +198,7 @@ class Http
     }
 
     /**
-     * Http encode.
+     * http encode.
      *
      * @param string        $content
      * @param TcpConnection $connection
@@ -207,11 +207,11 @@ class Http
     public static function encode($content, TcpConnection $connection)
     {
         // Default http-code.
-        if (!isset(HttpCache::$header['Http-Code'])) {
+        if (!isset(HttpCache::$header['http-Code'])) {
             $header = "HTTP/1.1 200 OK\r\n";
         } else {
-            $header = HttpCache::$header['Http-Code'] . "\r\n";
-            unset(HttpCache::$header['Http-Code']);
+            $header = HttpCache::$header['http-Code'] . "\r\n";
+            unset(HttpCache::$header['http-Code']);
         }
 
         // Content-Type
@@ -251,7 +251,7 @@ class Http
             return $http_response_code ? header($content, $replace, $http_response_code) : header($content, $replace);
         }
         if (strpos($content, 'HTTP') === 0) {
-            $key = 'Http-Code';
+            $key = 'http-Code';
         } else {
             $key = strstr($content, ":", true);
             if (empty($key)) {
@@ -264,8 +264,8 @@ class Http
         }
 
         if (isset(HttpCache::$codes[$http_response_code])) {
-            HttpCache::$header['Http-Code'] = "HTTP/1.1 $http_response_code " . HttpCache::$codes[$http_response_code];
-            if ($key === 'Http-Code') {
+            HttpCache::$header['http-Code'] = "HTTP/1.1 $http_response_code " . HttpCache::$codes[$http_response_code];
+            if ($key === 'http-Code') {
                 return true;
             }
         }
@@ -497,7 +497,7 @@ class Http
 }
 
 /**
- * Http cache for the current http response.
+ * http cache for the current http response.
  */
 class HttpCache
 {
