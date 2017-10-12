@@ -87,7 +87,7 @@ class Live extends BaseBackend
     }
 
     /**
-     * 录像操作
+     * 录像操作     1233
      */
     public function recordHandle()
     {
